@@ -1,0 +1,104 @@
+<script type="text/javascript">
+        function onABCommComplete() {                
+                Plaxo.abl.abWin.close();
+        }
+ </script>
+<div id = "message">
+</div>
+
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+ 
+<div>
+<div  class="curves">Add new Bookmark</div>
+</div>
+
+<% remote_form_for :bookmark, :url => {:action => 'save', :update => 'taskdetails', :context => @context}, :before => "Element.show('spinner');Element.hide('taskdetails')",
+																			:complete => "Element.hide('spinner')" do |form| -%>
+
+<fieldset>
+<LEGEND ACCESSKEY=S>Store <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :store, :duration => 0.5) %></span></LEGEND>
+	
+        <div id="store">
+           <div class="row">
+		  <span class="label">Title:</span>
+		  <span	class="formw"><%= text_field_tag :title, nil, {:size => 50,:maxlength => 250} %><span style="font-size:80%;color:#ff0000;"> required</span></span>
+	</div>
+	<div class="row">
+		  <span class="label">URL:</span>
+		  <span	class="formw"><%= text_field_tag :url, nil,:size => 250,:maxlength => 250 %><span style="font-size:80%;color:#ff0000;"> required</span></span>
+	</div>
+	<div class="row">
+		  <span class="label">Notes:</span>
+                  <% max = 1000 %>
+		  <span	class="formw"><%= form.text_area :notes,:cols => "37", :rows => "4",
+                                      :onkeyup => " if (this.value.strip().length > #{max})
+                                                    {this.value = this.value.substring(0, #{max});
+                                                    $('length_alert').update(#{max} + ' limit exceeded' ); }
+                                                    else { $('length_alert').update(#{max}-this.value.strip().length); } " -%>
+				<br/><span class ="info">characters allowed : <span id = "length_alert"><%= max = 1000 %></span></span></span>
+	</div>
+	<div class="row">
+		  <span class="label">Tags:</span>
+		  <span	class="formw"><%= text_field_with_auto_complete :bookmark, :tag_list, {:skip_style => true}, :tokens => ',' %><br/>
+                   <span class ="info"> (comma separated)</span> </span>
+		 <%= form.hidden_field :user_id, :value => current_user.id -%>                
+	</div>	
+<%= observe_field "bookmark_tag_list",:frequency => 1,
+ :url => { :action => "filter_resources"},
+:with => "'taglist=' + escape(value)" %>
+
+        <div class="row">
+			<span class="label">Share this:</span>
+			<span	class="formw narrow"><%= form.check_box :public , :checked => 'checked' %></span>
+	</div>
+	
+      </div>
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=O>Organize <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :organize, :duration => 0.5) %></span></LEGEND>
+<div id="organize" >	
+    <% if @entries && @entries.size > 0 %>
+	<div class="row">
+		<div id = 'parent_tasks'>
+			<span class="label">Associate with tasks:</span>
+			<span	class="formw">
+                        <div id = 'link-tasks'>
+                        <%= select_tag 'parent_tasks[]',    options_for_select(@entries.collect{|e| [ e.title,e.id ]} ),  { :multiple => true, :size =>2,:include_blank => true } %>
+                      </div>
+			</span>
+		</div>
+	</div>
+	<% end %>
+ </div>
+</fieldset>
+
+
+<fieldset class="schedule">
+<LEGEND ACCESSKEY=C>Schedule <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'schedule-form', :duration => 0.5) %></span></LEGEND>
+<div id="schedule-form">
+
+<div class="row">
+<span class="label">Frequency:</span>
+	<span	class="formw"><%= select 'bookmark', 'freq_type', @freqtypes.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]},   :selected => '1'  %>
+	</span>
+</div>
+
+
+<%= observe_field "bookmark_freq_type", :update => "interval",:frequency => 0.25,
+ :url => { :action => "displaydate"},
+:with => "'freqtype=' + escape(value)" %>
+
+<div id = 'interval'>
+
+</div>
+</div>
+</fieldset>
+
+<div class="submit">
+<%= submit_tag "Add" %> or <%= link_to "Cancel", :controller => :bookmark , :action => :index %>
+</div>
+
+</div>
+<% end %>

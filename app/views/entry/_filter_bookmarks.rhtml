@@ -1,0 +1,25 @@
+<% if @showall %>  
+       <span style="color: #ff0000;font-size:12px;">
+                <% if @filtered_bks && @filtered_bks.size > 0 %>            
+                  Filter by <em><%= link_to_remote @displaytags, :url => { :action => :filter_bookmarks,  :taglist => @displaytags} %></em> |         
+                <% end %>     
+                <% if @bookmarks && @bookmarks.size > 0 %> 
+                      Showing All  <br/>
+                    <%= select_tag 'bookmarks[]',    options_for_select(@bookmarks.collect{|e| [ h(e.resource.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %>           
+               <% end %> 
+          </span>
+ <% else %> 
+        <span style="color: #ff0000;font-size:12px;">
+                   <% if @filtered_bks && @filtered_bks.size > 0 %>           
+                     Filtered by <span style="color: #0077BB;"><em><%= @displaytags %></em></span> | 
+                        Show <%= link_to_remote "All", :url => {:controller => 'entry', :action => :show_all_bookmarks,  :taglist => @displaytags, :type => 'all'} %>
+                      <%= select_tag 'bookmarks[]',    options_for_select(@filtered_bks.collect{|e| [ h(e.resource.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %>            
+                    <% else %>                 
+                         <% if @bookmarks && @bookmarks.size > 0 %> 
+                                Showing All  <br/>
+                              <%= select_tag 'bookmarks[]',    options_for_select(@bookmarks.collect{|e| [ h(e.resource.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %>           
+                         <% end %> 
+                  <% end %>
+          </span>
+<% end %>
+

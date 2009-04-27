@@ -1,0 +1,136 @@
+<div id = "message">
+</div>
+
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+ 
+<div>
+<div  class="curves">Add new Task</div>
+</div>
+
+<% remote_form_for :entry, :url => {:action => 'save', :update => 'taskdetails'}, :before => "Element.show('spinner');Element.hide('taskdetails')",
+                                                        :complete => "Element.hide('spinner')" do |form| %>
+
+<fieldset>
+  <LEGEND ACCESSKEY=S>Store <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :store, :duration => 0.5) %></span></LEGEND>
+	<div id="store">
+           <div class="row">
+		  <span class="label">Title:</span>
+		  <span	class="formw"><%= form.text_field :title, :size => 50,:maxlength => 50 -%></span>
+	</div>
+	<div class="row">
+		  <span class="label">Notes:</span>
+                  <% max = 1000 %>
+		  <span	class="formw"><%= form.text_area :notes,:cols => "52", :rows => "4",
+                                      :onkeyup => " if (this.value.strip().length > #{max})
+                                                    {this.value = this.value.substring(0, #{max});
+                                                    $('length_alert').update(#{max} + ' limit exceeded' ); }
+                                                    else  $('length_alert').update(#{max}-this.value.strip().length); " -%>
+				<br/>characters left : <span id = "length_alert"><%= max = 1000 %></span></span>		  
+	</div>
+	
+	<div class="row">
+		  <span class="label">Tags:</span>
+		  <span	class="formw"> <%= text_field_with_auto_complete :entry, :tag_list, :value => @entry.tags.collect{|t| t.name}.join("," ), :size => 15 , :skip_style => true, :tokens => ',' -%>(comma separated) </span>
+		 <%= form.hidden_field :user_id, :value => current_user.id -%>	
+                 
+       </div>
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=O>Organize <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :organize, :duration => 0.5) %></span></LEGEND>
+<div id="organize"  style="display: none;" >
+<% if @parententries.size > 0 %>
+	<div class="row">
+			<span class="label">Goal:</span>
+			<span	class="formw"><%= select 'entry', 'parent_id', @parententries.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>
+				<%= observe_field "entry_parent_id", :update => "childtasks",:frequency => 0.25,
+				 :url => { :action => "displaychildtasks"},
+				:with => "'taskid=' + escape(value)" %>
+			</span>
+	</div>
+	
+	
+<%end%> 
+ 
+ <% if @childentries.size > 0 %>
+	<div class="row">
+			<span class="label">Pick Sub-tasks:</span>
+			<span	class="formw">
+				<div id = 'childtasks'>
+					<%= select_tag 'child_tasks[]',    options_for_select(@childentries.collect{|e| [ h(e.title),e.id ]} ),  { :multiple => true, :size => 4,:include_blank => true } if @childentries.size > 0%>
+				</div>
+			</span>
+	</div>	
+ <%end%>
+ 
+   <% if @bookmarks.size > 0 %>
+	<div class="row">
+			<span class="label">Related Bookmarks:</span>
+			<span	class="formw"><%= select_tag 'bookmarks[]',    options_for_select(@bookmarks.collect{|e| [ h(e.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %> 
+			</span>
+	</div>
+	
+ <%end%> 
+  <% if @saved_feed_items.size > 0 %>
+	<div class="row">
+			<span class="label">Related feed posts:</span>
+			<span	class="formw"><%= select_tag 'feed_items[]',    options_for_select(@saved_feed_items.collect{|e| [ h(e.title + " - " + e.feed.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %> 
+			</span>
+	</div>
+	
+ <%end%> 
+</div>
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=C>Schedule <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'schedule-form', :duration => 0.5) %></span></LEGEND>
+<div id="schedule-form">
+
+<div class="row">
+<span class="label">Frequency:</span>
+	<span	class="formw"><%= select 'entry', 'freq_type', @freqtypes.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]},   :selected => '1'  %>
+	</span>
+</div>
+
+
+<%= observe_field "entry_freq_type", :update => "interval",:frequency => 0.25,
+ :url => { :action => "displaydate"},
+:with => "'freqtype=' + escape(value)" %>
+
+<div id = 'interval'>
+
+</div>
+
+  </div>
+
+</fieldset>
+
+<fieldset id="options" >
+<LEGEND ACCESSKEY=P>Options <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'other-options', :duration => 0.5) %></span></LEGEND>
+<div id="other-options"   style="display: none;">
+	<div class="row wide-row">
+			<span class="label">Public:</span>
+			<span	class="formw"><%= form.check_box :public %>
+			</span>
+	</div>
+	<div class="row wide-row">
+			<span class="label">Priority:</span>
+			<span	class="formw"><%= select( 'entry', 'priority', { "Low" => "1", "Medium" => "2", "High" => "3"}, :selected => "2") %>
+			</span>
+	</div>
+	<div class="row wide-row">
+			<span class="label">Overdue reminder:</span>
+			<span	class="formw"><%= form.check_box :overdue_reminder, :checked => 'checked' %>
+			</span>
+	</div>
+ </div>
+</fieldset>
+
+<div id="submit">
+<%= submit_tag "Add" %> or <%= link_to "Cancel", :controller => :entry , :action => :list %>
+</div>
+
+</div>
+<% end %>
+ 

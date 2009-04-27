@@ -1,0 +1,26 @@
+<div id="request-status">Interested? <%= link_to_function "Request an account",   visual_effect(:toggle_blind, "request_signup", :duration => 0.5) %></div>
+ <%= image_tag 'loading.gif', :id=>'spinner', :style=>"display:none;" %>	
+<div id="request_signup"   style="display: none;" >	
+
+<%= error_messages_for(:signup) %>
+
+
+<% remote_form_for :signup, :url => {:controller => 'signup', :action => :create, :update => 'request'}, :before => "Element.show('spinner');",
+                                                        :complete => "Element.hide('spinner')" do |f| -%>	
+	  Name:
+	  <%= f.text_field :name , :size => 40,:maxlength => 10 %><br/>	
+	
+	  Email: 
+	 <%= f.text_field :email , :size => 40,:maxlength => 100 %><br/>	
+	
+	<div class="submit">
+		<%= submit_tag 'Request', :onclick => visual_effect(:toggle_blind, "request_signup", :duration => 0.5) %> 
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>	
+
+<% end -%>
+
+</div>
+

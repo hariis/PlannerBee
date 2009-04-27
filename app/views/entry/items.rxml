@@ -1,0 +1,13 @@
+
+xml.response(:code => @code) do 
+ xml.timestamp(TzTime.now)
+  xml.entries do
+    @entries.each do |entry| 
+      xml.entry do
+        xml.title(entry.title)
+        xml.notes(entry.notes)
+      end
+    end
+  end 
+end
+

@@ -1,0 +1,10 @@
+div#content
+{
+clear:both;
+border:1px solid #EEEEEE;
+height:100%;
+padding:15px 25px;
+
+text-align:center;
+}
+

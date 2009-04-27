@@ -1,0 +1,222 @@
+<% if @showentry == nil %>
+No tasks due
+<% else %>	
+ <% is_goal = @showentry[:type] == 'Goal' %>
+<div  class="curves">
+<% if overduetoday && @showentry.entry_status.is_pending %> <span style="color: #ff0000;"><%end %>
+<%= h(@showentry.formatted_title) %></div>  
+<% if overduetoday && @showentry.entry_status.is_pending %> </span><% end %>
+<% if is_owner(@showentry) && context == 'task' then %>
+      <% skipped = @showentry.entry_status.skipped_on if @showentry.entry_status %> 
+      <% history = @showentry.entry_status.completion_history if @showentry.entry_status %> 
+ 
+    <div id="actions">
+       <% can_be_marked = duetoday && !displayonly && history && history["#{TzTime.now.to_date}"] == "" %>
+       <% still_active = @showentry.entry_status == nil ||  !@showentry.entry_status.ended? %>
+       <ul><span style="font-size:80%;"><%= "Mark as:"  if (duetoday && history["#{TzTime.now.to_date}"] == "") || (@showentry.is_periodic && !@showentry.entry_status.ended? && !is_goal) %></span> 
+            <span style="float:left;">		
+                <li><%= link_to_remote image_tag('checked.png',  :title => "Mark as Done") + 'Done', :url => {:controller => 'entry_status', :action => :done, :id => @showentry.id, :incontext => context},
+                    :before => "Element.show('done_progress')",:complete => "Element.hide('done_progress')"  if can_be_marked %>
+                 <%= image_tag 'spinner.gif', :id=>'done_progress', :style=>"display:none;" %></li>
+                <li><%= link_to_remote image_tag('skipped.png',  :title => "Mark as Skipped") + 'Skip', :url => {:controller => 'entry_status', :action => :skip, :id => @showentry.id, :incontext => context},
+                    :before => "Element.show('skip_progress')",:complete => "Element.hide('skip_progress')" if can_be_marked && !is_goal %>
+                    <%= image_tag 'spinner.gif', :id=>'skip_progress', :style=>"display:none;" %></li> 
+		
+                 
+                <li><%= link_to_remote image_tag('end.png',  :title => "End this task") + 'End', :url => {:controller => 'entry_status', :action => :complete, :id => @showentry.id, :incontext => context} ,
+                      :confirm => "This will move the End Date forward to Today. Hence, there will not be any more scheduling of this task. All pending instances of this task will be marked as Skipped. Please Confirm.",
+                    :before => "Element.show('end_progress')",:complete => "Element.hide('end_progress')" if still_active && @showentry.is_periodic && !is_goal %>
+                    <%= image_tag 'spinner.gif', :id=>'end_progress', :style=>"display:none;" %></li>  
+              </span>
+            <span style="float:right;">	
+                <li><%= link_to_remote image_tag('edit.png',  :title => "Edit this task") + 'Edit', :update => 'taskdetails', :url => {:controller => 'entry',:action => 'edit', :id => @showentry.id, :incontext => context},
+                    :before => "Element.show('edit_progress')",:complete => "" if still_active %>
+                    <%= image_tag 'spinner.gif', :id=>'edit_progress', :style=>"display:none;" %></li>
+               
+		<li> <%= link_to  image_tag('delete.png',  :title => "Delete this task") + 'Delete', {:controller => 'entry', :action => :destroy, :id => @showentry.id}, {:confirm => "Since 'Delete' action can't be Undone, please Confirm."} %></li>
+             </span>	
+	</ul> 
+  </div> 
+  <div id="status">  
+   <% if history %>
+      <% sorted_history = history.sort %>      
+             <div  class="curves"><%= is_goal ? "Goal History" : "Task History" %> <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :taskhistory, :duration => 0.5) %></span></div>
+
+       <% if is_owner(@showentry)  || @showentry.public? then %>
+    <div id="schedule">
+        <div id="schedule-heading" > Schedule </div>
+        <%= display_schedule(@showentry) %>
+ </div>
+<% end %>
+
+              <ul id="taskhistory"><span class = "history-scheduled" style = "font-weight:bold;background-color:#A9ED2E;"> Scheduled </span><span class = "history-status" style = "font-weight:bold;background-color: #ffffff;">   Status </span> 
+              <% sorted_history.each do |item| %>
+                       <% key = item[0] %>
+                       <% value = item[1] %>
+                       <% if value != "" && skipped && skipped.has_key?(key) %>      
+                                <li><%= "<span class = 'history-scheduled'> #{key} </span><span class = 'history-status'>  Skipped </span> "  %> |
+                                <%= link_to_remote 'Undo', :url => {:controller => 'entry_status', :action => :overdue_undone, :id => @showentry.id, :date => key, :incontext => "task"} , 
+                                   :before => "Element.show('undo_skip_progress_#{key}')",:complete => "Element.hide('undo_skip_progress_#{key}')" if !@showentry.entry_status.ended? %> 
+                                <%= image_tag 'spinner.gif', :id=>"undo_skip_progress_#{key}", :style=>"display:none;" %></li> 
+                       <% elsif value != "" && value == key %>
+                                <li><%= "<span class = 'history-scheduled'> #{key} </span><span class = 'history-status'>Done</span>"  %> |
+                                <%= link_to_remote 'Undo', :url => {:controller => 'entry_status', :action => :overdue_undone, :id => @showentry.id, :date => key, :incontext => "task"} , 
+                                   :before => "Element.show('undo_done_progress_#{key}')",:complete => "Element.hide('undo_done_progress_#{key}')"  if !@showentry.entry_status.ended? %>
+                                <%= image_tag 'spinner.gif', :id=>"undo_done_progress_#{key}", :style=>"display:none;" %>  </li>  
+                       <% elsif value != "" %>
+                               <% gap = Date.parse(value) - Date.parse(key) %>
+                                <li><%= "<span class = 'history-scheduled'> #{key} </span><span class = 'history-status'>" %>
+                                <%= "Done late by " + gap.to_s + " day(s)" if gap > 0 %><%= "Done ahead  by " + (gap * -1).to_s + " day(s)" if gap < 0 %>
+                                <%= "</span>"  %>  |
+                                <%= link_to_remote 'Undo', :url => {:controller => 'entry_status', :action => :overdue_undone, :id => @showentry.id, :date => key, :incontext => "task"}, 
+                                   :before => "Element.show('undo_overdue_progress_#{key}')",:complete => "Element.hide('undo_overdue_progress_#{key}')"   if !@showentry.entry_status.ended? %>
+                                     <%= image_tag 'spinner.gif', :id=>"undo_overdue_progress_#{key}", :style=>"display:none;" %></li>
+                       <% elsif value == "" && Date.parse(key) != TzTime.now.to_date %>
+                                <li><span class = 'history-scheduled'> <%= key %> </span>
+                               <% if @showentry.overdue_reminder && overduetoday %> 
+                                  <span class = 'history-status'>
+                                  <%= link_to_function "Mark as Done",   visual_effect(:toggle_blind, "done-submit_#{key}", :duration => 0.5) %> |
+                                  <%= link_to_remote 'Skip', :url => {:controller => 'entry_status', :action => :overdueskip, :id => @showentry.id, :date => key , :incontext => 'task'} , 
+                                   :before => "Element.show('skip_overdue_progress_#{key}')",:complete => "Element.hide('skip_overdue_progress_#{key}')" %>
+                                 <%= image_tag 'spinner.gif', :id=>"skip_overdue_progress_#{key}", :style=>"display:none;" if  !is_goal %>
+                                  <div id="done-submit_<%= key %>"  style='display:none;background-color:#ffffff; border: 3px solid #80cffe; padding:10px;position:absolute;'>
+                                            <%= image_tag 'loading.gif', :id=>"submit-spinner_#{key}", :style=>"display:none;" %>
+                                             <% remote_form_for :feed_item, :url => {:controller => :entry_status ,:action => :overduedone, :id => @showentry.id, :date => key, :incontext => 'task'},
+                                              :before => "Element.show('submit-spinner_#{key}');" ,:complete => "Element.hide('submit-spinner_#{key}');Element.toggle('done-submit_#{key}');" do |form| -%>
+                                                            On:
+                                                            <% thisday = TzTime.now.to_date %>
+                                                           <%= select_date thisday ,  :prefix => "done_on", :order => [:day, :month, :year] , :date_separator => '/' %>
+                                                           <p>
+                                                            <%= submit_tag "OK" %> or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, "done-submit_#{key}", :duration => 0.5) %>                                                           
+                                                          </p>
+                                                <% end %>
+                                   </div>
+                                  
+                                  </span>
+                                <% end %>
+                                </li>  
+                        <% end %>
+               <% end %>
+               <% if @showentry.entry_status.ended? %>
+                          <span class="task-ended">Task has ended.</span>
+                <% end %>
+               </ul>
+        
+   <% end %>
+</div>
+ <% end %>    
+ 
+
+
+<div id="tasknotes">
+	
+        <div class="row">
+			  <span class="show-label">Notes:  </span>
+			  <span	class="show-value"><%= h(@showentry.notes)  %></span>
+		</div>
+		<div class="row">
+			  <span class="show-label">Tags:  </span>
+			  <span	class="show-value"><%= h(@showentry.tags.collect{|t| t.name}.join("," ))  %></span>
+		</div>
+<% if is_owner(@showentry) then %>
+                <div class="row">
+			  <span class="show-label">Shared:  </span>
+			  <span	class="show-value"><%= if @showentry.public then "Yes" else "No" end   %></span>
+		</div>
+                <div class="row">
+			  <span class="show-label">Priority:  </span>
+			  <span	class="show-value"><%= Entry::PRIORITY[@showentry.priority]   %></span>
+		</div>
+<% end %>
+</div>
+<div id="taskattachments">
+		<div class="curves">Linked Items <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'related-items', :duration => 0.5) %></span></div>
+		<div id="related-items">
+                <% if !is_goal %>
+                          <div id ="ptask">Goal:</div> 
+                          <% if goal %>
+                                  <% if is_owner(goal)  || goal.public? then %>
+                                      <ul><li><%= link_to_remote h(goal.title), :url => { :controller => 'entry', :action => "show", :id => goal.id, :incontext => context, :displayonly => true} %></li></ul>
+                                  <% else %>
+                                      <ul><li>Goal is private</li></ul>  
+                                  <% end %>
+                          <% else %>
+                                  <ul><li>None</li></ul>
+                          <% end %>
+                          <div id ="ptask">Parent Task:</div> 
+                          <% if parent %>
+                                  <% if is_owner(parent)  || parent.public? then %>
+                                      <ul><li><%= link_to_remote h(parent.title), :url => { :controller => 'entry', :action => "show", :id => parent.id, :incontext => context, :displayonly => true} %></li></ul>
+                                  <% else %>
+                                      <ul><li>Task is private</li></ul>  
+                                  <% end %>
+                          <% else %>
+                                  <ul><li>None</li></ul>
+                          <% end %>
+		
+	        <% end %>	
+                        <div id ="ptask">Sub Tasks:</div>
+                        <% if children == nil || children.size == 0 %>
+                                        <ul><li>None</li></ul>
+                        <% else %>
+                        <ul>
+                        <% children.each {|entry| %>
+                                <% if is_owner(entry)  || entry.public? then %>
+                                    <li><%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => context, :displayonly => true} %></li>
+                                <% else %>
+                                    <ul><li>Task is private</li></ul>  
+                                <% end %>			
+                        <% } %>
+                        </ul>
+                        <% end %>
+		
+		
+		<div id ="ptask">Bookmarks:</div>
+		<% if @showentry.bookmarks.size == 0 %>
+			<ul><li>None</li></ul>
+		<% else %>
+                      <ul>
+                      <% @showentry.bookmarks.each {|bk| %>
+                              <% if is_owner(bk)  || bk.public? then %>
+                                  <li><%= link_to_remote h(bk.resource.title.capitalize),:url => { :controller => 'bookmark', :action => "show", :id => bk.id, :incontext => context, :displayonly => true} %></li>
+                              <% else %>
+                                  <li>This bookmark is private</li>
+                              <% end %>                        
+                      <% } %>
+                      </ul>
+		<% end %>
+                <div id ="ptask">Feed Posts:</div>
+		<% if @showentry.feed_items.size == 0 %>
+			<ul><li>None</li></ul>
+		<% else %>
+                      <ul>
+                      <% @showentry.feed_items.each {|post| %>
+                            <li><%= link_to_remote h(post.title),:url => { :controller => 'feed_item', :action => "show", :id => post.id, :task_owner => @showentry.user.id,:incontext => context, :displayonly => true} %></li>
+                      <% } %>
+                      </ul>
+		<% end %>
+               </div>
+</div>
+<div id="related">
+<div class="curves">Related Tasks <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'related-tasks', :duration => 0.5) %></span></div>
+      <div id="related-tasks"> 
+      <% if related && related.size == 0 %>
+              <ul><li>None</li></ul>
+      <% else %>
+      <% items_added = false %>
+      <ul>
+      <% related.each {|entry| %>
+             <% if entry.user != current_user && entry != @showentry && entry.public? then %>
+               <% items_added = true %>
+              <li><%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => context, :displayonly => true} %> by <%= "#{entry.user.login}" %></li>
+              <% end %>
+      <% } %>
+      <% if !items_added %>
+            <li>None</li>  
+      <% end %>
+      </ul>
+      <% end %>
+    </div>
+</div>   
+
+<% end %>

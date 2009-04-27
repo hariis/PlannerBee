@@ -1,0 +1,6 @@
+page.replace_html "share-form-status_#{@feeditem.id}", @status_message
+page.show "share-form-status_#{@feeditem.id}"
+page.delay(5) do
+      #page.replace_html 'share-form-status', ""
+      page.visual_effect :fade, "share-form-status_#{@feeditem.id}"
+end

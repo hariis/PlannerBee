@@ -1,0 +1,3 @@
+page.hide 'results'
+page.show 'taskdetails'
+page.replace_html("taskdetails", :partial => "taskdetails",:locals => { :context => @incontext,:displayonly => @displayonly, :related => @related})

@@ -1,0 +1,5 @@
+page.replace_html 'share-form-status', @status_message
+page.delay(5) do              
+              page.visual_effect :fade, 'share-form-status'
+              page.replace_html 'share-form-status', ""
+end

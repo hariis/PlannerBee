@@ -1,0 +1,5 @@
+<% if todays && todays.size != 0 %>
+	 <%= render(:partial => "today_item", :collection => todays) %>	 
+<% else %>
+   None
+<% end %>

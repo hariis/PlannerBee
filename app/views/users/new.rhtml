@@ -1,0 +1,54 @@
+
+<div id="headband">
+Signup
+</div>
+<% hidden_div_if( flash[:error] == nil , :id => "flash-notice") do %>
+	<%= flash[:error] %>
+<% end %>
+<div id="content">
+
+<% hidden_div_if( flash[:notice] == nil , :id => "status-notice") do %>
+	<%= flash[:notice] %>
+<% end %>
+<% form_for :user, :url => {:action => :create} do |f| -%>
+
+	<div class="row">
+	  <span class="label">Choose Username:</span>
+	  <span	class="formw"><%= f.text_field :login , :size => 30,:maxlength => 10 %>
+           <br/><span style="font-size:90%">(letters and numbers only - between 3 and 10 characters)</span></span>
+	</div>
+	<div class="row">
+	  <span class="label">Your Email:</span>
+	  <span	class="formw"><%= f.text_field :email , :size => 30,:maxlength => 100 %></span>
+	</div>
+	<div class="row">
+	  <span class="label">Choose Password:</span>
+	  <span	class="formw"><%= f.password_field :password , :size => 30,:maxlength => 20 %>
+	  <br/> <span style="font-size:90%">(between 5 and 20 characters)</span></span>
+	</div>
+	<div class="row">
+	  <span class="label">Confirm Password:</span>
+	  <span	class="formw"><%= f.password_field :password_confirmation , :size => 30,:maxlength => 20 %></span>
+	</div>
+        <div class="row">
+	  <span class="label">Pick your TimeZone:</span>
+	  <span	class="formw"><%= f.time_zone_select :time_zone ,nil, :priority_zones => TZInfo::Timezone.us_zones, :selected => "Pacific Time (US & Canada)"  , :include_blank => true %></span>
+	</div>
+        <div class="row">
+	  <span class="label">Alpha Buzzcode:</span>
+	  <span	class="formw"><%= text_field_tag 'buzz'  %></span>
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>
+	<div id="submit">
+		<%= submit_tag 'Sign up', :disable_with => "Signing up&hellip;" %> 
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>
+	
+
+<% end -%>
+
+</div>

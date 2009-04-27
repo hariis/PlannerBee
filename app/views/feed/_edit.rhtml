@@ -1,0 +1,80 @@
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+ 
+<div class = 'feeditem_title'>Editing <i><%= @feed.title %> </i></div>
+
+<% remote_form_for :feedsubscription, :url => {:action => 'update', :update => 'feeddetails',:id => @feed.id, :context => @context}, :before => "Element.show('spinner');Element.hide('feeddetails')",
+																			:complete => "Element.hide('spinner');Element.show('feeddetails')" do |form| -%>
+
+<fieldset>
+<LEGEND ACCESSKEY=S>Store</LEGEND>
+	<div class="row">
+		  <span class="label">Title:</span>
+		  <span	class="formw"><%= text_field_tag :title, @feed.title, {:readonly => "true"} %></span>
+	</div>
+	<div class="row">
+		  <span class="label">Feed Url:</span>
+		  <span	class="formw"><%= text_field_tag :url, @feed.url, {:readonly => "true"} %></span>
+	</div>
+	<div class="row">
+            <span class="label">Tags:</span>
+            <span class="formw"><%= text_field_with_auto_complete :feedsubscription, :tag_list, {:value => @feedsubscription.tags.collect{|t| t.name}.join("," ),:skip_style => true}, :tokens => ','  %><br/>(comma separated) </span>							
+            <%= form.hidden_field :user_id, :value => current_user.id -%>   
+	</div> 
+	
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=C>Schedule</LEGEND>
+
+
+<div class="row">
+<span class="label">Frequency:</span>
+	<span	class="formw"><%= select 'feedsubscription', 'freq_type', @freqtypes.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]} ,   :selected => "#{@feedsubscription.freq_type}"  %>
+	</span>
+</div>
+
+<%= observe_field "feedsubscription_freq_type", :update => "interval",:frequency => 0.25,
+ :url => { :action => "displaydate"},
+:with => "'freqtype=' + escape(value)" %>
+
+<div id = 'interval'>
+	
+	<% if "#{@feedsubscription.freq_type}" == '6' || "#{@feedsubscription.freq_type}" == '7' || "#{@feedsubscription.freq_type}" == '8' || "#{@feedsubscription.freq_type}" == '9' || "#{@feedsubscription.freq_type}" == '10' %>
+		<div class="row">
+			<span class="label">Starting:</span>
+			<div id="cal">
+			<span	class="formw">	<%= calendar_date_select_tag "start", tz(@feedsubscription.start_dt_tm), :time => false  %></span>
+			</div>
+		</div>
+		<div class="row">
+				<span class="label">Ending:</span>
+				<div id="cal">
+				<span	class="formw">	<%= calendar_date_select_tag "end", tz(@feedsubscription.end_dt_tm), :time => false %></span>
+				</div>
+		</div>
+		<div class="row">
+			<span class="label"></span>
+			<span	class="formw"><%= select_tag 'freq_interval',    options_for_select(  @freqintervals.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]}, "#{@feedsubscription.freq_interval}" ) %></span>
+		</div>
+
+		<% if @freqintervalsqual %>
+			<div class="row">
+				<span class="label"></span>
+				<span	class="formw"><%= select_tag 'freq_interval_details[]',    options_for_select(@freqintervalsqual.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]},@freqintervalsqual_selected ),  { :multiple => true, :size => 7 } %> </span>
+			</div>
+		<% end -%>
+
+	<% end -%>
+	
+</div>
+
+</fieldset>
+
+<div class="submit">
+<%= submit_tag "Update" %> or <%= link_to "Cancel", :controller => :feed , :action => :index %>
+</div>
+
+</div>
+<% end -%>
+

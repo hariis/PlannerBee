@@ -1,0 +1,19 @@
+<div id="headband">
+Resend Activation email
+</div>
+
+
+	<% hidden_div_if( @errormessage == nil , :id => "flash-notice") do %>
+		<%= @errormessage %>
+	<% end %>
+
+	<div id="content">
+	<% form_tag :action => 'send_activation' do -%>
+
+		
+		<%= render :partial => 'request_email' %>
+		
+
+	<% end -%>
+
+	</div>

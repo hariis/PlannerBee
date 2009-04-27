@@ -1,0 +1,30 @@
+<div id='feedtitle'>
+        <% if subscription %>
+            <%= subscription.feed.title %> 
+        <% end %>
+ </div>
+
+<div id="view_saved_action"><ul>        
+         <% if subscription.feed_items.size > 0  %>
+                      <li><%= link_to_remote "View Saved Items", :update => "feeddetails",:url => { :controller => 'feed', :action => "view_saved", :subscription_id => subscription.id } %>
+                      </li>
+         <% end %>
+        <% if unread && @currentDisplayfeeditems && @currentDisplayfeeditems.size > 0 %>
+                      <li> <%= link_to 'Mark All read', {:controller => 'feed', :action => :mark_all_read, :subscription_id => subscription.id,:context => 'feed'} %>
+                      </li>
+        <% end %>
+ </ul> </div>   
+
+<div id="all_feed_items">
+<% if  @currentDisplayfeeditems && @currentDisplayfeeditems.size > 0 %>
+   <%= render :partial => 'feeditem', :collection => @currentDisplayfeeditems, :locals => {:unread => unread ,:subscription => subscription }, :spacer_template => 'spacer' %> 
+<% else %>
+      <div  class="feeditem"><p>No feed items due</p></div>
+<% end %>
+</div>
+<% if  @currentDisplayfeeditems && @currentDisplayfeeditems.size > 0 %>
+<div id="expand-hide"><%= link_to_function "Toggle Feed Items Display",   visual_effect(:toggle_blind, "all_feed_items", :duration => 0.5) %>
+  </div>
+<div id="hide-details" style="display: none"><%= link_to_function "Toggle Task Details",   visual_effect(:toggle_blind, "taskdetails", :duration => 0.5) %>
+  </div>
+<% end %>

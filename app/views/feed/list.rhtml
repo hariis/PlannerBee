@@ -1,0 +1,25 @@
+<%= flash[:warning] || flash[:message] || flash[:notice] %>
+<table style="font-family: Tahoma, 'Lucida Console' ">
+ <tr>
+   <td  style="width: 414px" bgcolor="#ccffcc"><span style="font-size: 18pt">My Feeds for Today</span></span></td>
+   <td></td>
+  </tr>
+
+ <% @feeds.each do |feed| %>
+   
+     <tr>
+      <td><%= link_to feed.title, :action => "show", :id => feed.id %></td>
+      <td> <span style="font-size: 8pt; color: #cc3366;">
+                    <%= link_to "(mark as read)", {:action => "done", :id => feed.id} %> |
+                    <%= link_to "(edit)", {:action => "edit", :id => feed.id} %>  |
+                    <%= link_to "(unsubscribe)", {:action => "destroy", :id => feed.id} %>
+              </span>
+      </td>
+     </tr>
+      
+      
+     
+     
+   <% end %>
+
+</table>

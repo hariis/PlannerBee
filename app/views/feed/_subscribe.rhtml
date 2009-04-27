@@ -1,0 +1,23 @@
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+
+<% form_remote_tag :url => { :action => :validate_feed }, :before => "Element.show('spinner');$('feeddetails').innerHTML='';$('flash-notice').innerHTML=''",
+																			:complete => "Element.hide('spinner')" do -%>
+
+<fieldset>
+<LEGEND ACCESSKEY=S>Feed details</LEGEND>
+	<div class="row">
+		  <span class="label">Feed Url:</span>
+		  <span	class="formw"><%= text_field_tag :url, "", :size => 50,:maxlength => 250 %></span>
+	</div>
+		
+</fieldset>
+
+
+<div class="submit">
+<%= submit_tag "Validate" %> or <%= link_to "Cancel", :controller => :feed , :action => :index %>
+</div>
+
+  </div>
+<% end -%>
+ 

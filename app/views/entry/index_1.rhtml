@@ -1,0 +1,67 @@
+<div id="feedcontainer"> 
+            
+            <div id="feedheader"  class="border">
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+                <div id="context-title">
+                <%= Date.today.to_s(:long) %>
+                </div>
+								
+                <div id="addnew">
+					<% form_remote_tag :url => { :action => :new },:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')",
+																			:complete => "Element.hide('spinner')" do -%>
+						<%= submit_tag "Add new task" %>
+					<% end -%>
+                </div>
+				<div id="searchform">
+				<% form_remote_tag :url => { :action => :find },:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML=''",
+																			:complete => "Element.hide('spinner')" do -%>
+					<p>Search tasks </p>
+					<%= text_field_tag('want','', {:size => 20, :maxlength => 20}) %> <%= submit_tag 'Show me' %><br/>
+					(Separate multiple keywords with spaces)
+				<% end -%>
+				</div>
+				
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+				<div class="spacer">
+                  &nbsp;
+                </div>
+            </div>
+			<div id = "flash-notice">
+			</div>
+            <div id="feedbody">
+	        
+	        <div id="feednav" class="border">
+	                <div id="tasksheading" class="curves">Tasks today</div>
+					<ul id="task_list">
+							<!-- List tasks -->
+							<%= render :partial => 'shared/entries', :locals => {:duetoday => true, :outline => false  } %>
+					</ul>
+					<%= sortable_element 'task_list' , :url => { :action => 'save_order' } %>
+					<div id="overduetasksheading"  class="curves">Overdues</div>
+					<ul  id="overduetask_list">
+							<%= render :partial => 'shared/entries', :object => @overdues, :locals => {:duetoday => false, :outline => false  }  %>					
+					</ul>
+					
+					<div id="addedheading"  class="curves">Added/Updated today </div>
+					<ul  id="addedtask_list">
+							<%= render :partial => 'displayonlyentries', :object => @addedtoday %>					
+					</ul>
+					
+                        <div id="tagcloudheading"  class="curves"><%= link_to_remote "View TagCloud", :url => {:action => 'tagcloud'} %> </div>
+                        
+	        </div>
+            
+            <div id="results" class="curves" style = "display:none">
+				
+			</div>
+			<div id="taskdetails" class="curves">
+				<%= render :partial => 'taskdetails' ,:locals => { :duetoday => true, :displayonly => false,:overduetoday => false, :children => @childentries, :parent => @parent, :context => @incontext, :related => @related }%>
+			</div>      
+    </div>    
+      
+
+</div>

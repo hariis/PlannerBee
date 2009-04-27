@@ -1,0 +1,42 @@
+<div style="font-weight: bold;color:#107CE0;text-align:center;font-size:18px;">Tasks relevant to '<span class="bolden"><%= @displaytags %>'</span> </div>
+
+<div id="friends-results">
+   By your friends scheduled on <span class="bolden"><%= @scheduled_date.to_s(:long) %></span>
+          <ul>
+                  <% @friend_entries_on_date.each {|entry|  %>
+                    <li> <%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => "task", :displayonly => true} %><span class="italicize"> by <%= entry.user.login %></span>
+                  <%  }  %>
+                  <% if @friend_entries_on_date.length == 0  %>
+                    <li> None </li>
+                  <% end %>
+            </ul>
+   By your friends on different days
+          <ul>
+                  <% @friend_entries.each {|entry|  %>
+                    <li> <%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => "task", :displayonly => true} %> <span class="italicize"> by <%= entry.user.login %></span>
+                  <%  }  %>
+                  <% if @friend_entries.length == 0  %>
+                    <li> None </li>
+                  <% end %>
+          </ul>
+</div>
+<div id="comm-results">
+         By others on <span class="bolden"><%= @scheduled_date.to_s(:long) %></span>
+              <ul>
+              <% @comm_entries_on_date.each {|entry|  %>
+                <li> <%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => "task", :displayonly => true} %> <span class="italicize"> by <%= entry.user.login %></span>
+              <%  }  %>
+              <% if @comm_entries_on_date.length == 0  %>
+                <li> None </li>
+              <% end %>
+              </ul>
+         By others on different days
+              <ul>
+              <% @comm_entries.each {|entry|  %>
+                <li> <%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => "task", :displayonly => true} %> <span class="italicize"> by <%= entry.user.login %></span>
+              <%  }  %>
+              <% if @comm_entries.length == 0  %>
+                <li> None </li>
+              <% end %>
+              </ul>
+</div>

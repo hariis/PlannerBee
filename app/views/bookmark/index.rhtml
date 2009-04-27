@@ -1,0 +1,84 @@
+<div id="feedcontainer">  
+            
+    <div id="feedheader">
+        <div class="spacer"> &nbsp; </div> 
+        <div id="context-title">
+            <%= TzTime.now.to_date.to_s(:long) %>
+        </div>
+				
+        <div id="addnew">          	
+                <%= link_to_remote image_tag('addnewbk.png',  :title => "Add new Bookmark"), :url => {:action => :new, :type=>'bookmark'},:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')",
+                                                                                                                :complete => "Element.hide('spinner')"   %>
+        </div>
+				
+        <div id="searchform">
+            <% form_remote_tag :url => { :action => :find },:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML=''",
+																			:complete => "Element.hide('spinner')" do -%>
+                <p>Search my bookmarks <span style="font-size:70%;">(Separate keywords with comma)</span></p>
+                <%= text_field_tag('want','', {:size => 20, :maxlength => 20}) %> <%= submit_tag 'Show me' %><br/>
+                
+            <% end -%>
+				</div>
+                
+        <div class="spacer"> &nbsp; </div>
+        <div class="spacer"> &nbsp; </div> 
+    </div>          
+
+		<div id="feedbody">
+	        
+	        <div id="feednav">
+              <div id="bkheading">Bookmarks today</div>
+					<ul id="bk_list">
+              <!-- List tasks -->
+              <%= render :partial => 'shared/bookmarks', :locals => {:outline => false }  %>
+          </ul>
+          <%= sortable_element 'bk_list' , :url => { :action => 'save_order' } %>
+                                        
+					<div id="overduebkheading">Overdues </div>
+          <ul id="overduebk_list">
+              <%= render :partial => 'overdues', :object => @overdues %>
+          </ul>
+          <%= sortable_element 'overduebk_list' , :url => { :action => 'save_overdue_order' } %>
+
+        <div id="queryheading"> <%=  select_tag 'query_type', options_for_select(@query_types.sort { |v1,v2| v1[1].to_i <=> v2[1].to_i}.collect{|k| [ k[0],k[1] ]}, 1) %></div>
+              <%= observe_field "query_type",:frequency => 0.25, 
+                                             :url => { :action => "show_query_results"},
+                                             :with => "'query_type=' + escape(value)" %>
+
+          <div id="pick_a_date"  style ="display:none;">View bookmarks for <%= calendar_date_select_tag "future_date", TzTime.now.to_date , :time => false  %></div>
+              <%= image_tag 'loading.gif', :id=>'nav_spinner', :style=>"display:none;" %>
+              <%= observe_field 'future_date', :update => 'query_results',:frequency => 0.25,
+                                               :url => { :action => :view_future},
+                                               :with => "'future_date=' + escape(value)", 
+                                               :before => "Element.show('nav_spinner');$('query_results').innerHTML='';" ,
+                                               :complete => "Element.hide('nav_spinner')" %>
+
+              <ul id="query_results"></ul>
+
+
+          <div id="addedheading">Added/Updated today</div>
+          <ul id="addedbk_list">
+            <!-- List tasks -->
+            <%= render :partial => 'todays', :object => @addedtoday %>
+            </ul>
+                                        
+          
+              <div id="tagcloudheading"><%= link_to_remote "Where's my Focus?", :url => {:action => 'tagcloud'} %> </div>
+	        </div>
+            
+          <div id="results" class="curves" style = "display:none"> </div>
+          <div id = "flash-notice"> </div>
+          <div id="taskdetails">
+              <% if @showbookmark != nil %>
+                  <%= render :partial => 'taskdetails', :locals => { :context => @context, :displayonly => false, :related => @related} %>
+              <% else %>
+                  <%= render :partial => 'new'  %>
+              <% end %>
+          </div>
+
+          <div id="feeddetails"  style="display: none"> </div>
+          <div id="all_feed_items"  style="display: none"> </div>
+          <div id="hide-details" style="display: none"> </div>    
+      
+      </div>
+  </div>

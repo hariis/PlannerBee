@@ -1,0 +1,35 @@
+<div id="tabs5">
+      <ul>
+            <!-- CSS Tabs -->
+            <li><a href="/"><span>Community</span></a></li>                      
+            <% if controller.controller_name == 'home' %>
+                  <li id="current"><a href="/home"><span>Dashboard</span></a></li>
+            <% else %>
+                  <li><a href="/home"><span>Dashboard</span></a></li>
+            <% end %>	
+
+            <% if controller.controller_name == 'entry' %>
+                  <li id="current"><a href="/entry"><span>Tasks</span></a></li>
+            <% else %>
+                  <li><a href="/entry"><span>Tasks</span></a></li>   
+            <% end %>
+            
+            <% if controller.controller_name == 'bookmark' %>
+                  <li id="current"><a href="/bookmark"><span>Bookmarks</span></a></li>
+            <% else %>
+                  <li><a href="/bookmark"><span>Bookmarks</span></a></li>
+            <% end %>
+            
+            <% if controller.controller_name == 'feed' %>
+                  <li id="current"><a href="/feed"><span>Feeds</span></a></li>
+            <% else %>
+                  <li><a href="/feed"><span>Feeds</span></a></li>
+            <% end %>
+            
+            <% if controller.controller_name == 'users' %>
+                  <li id="current"><a href="/users"><span>My Account</span></a></li>
+            <% else %>
+                  <li><a href="/users"><span>My Account</span></a></li>
+            <% end %>		
+      </ul>
+</div>

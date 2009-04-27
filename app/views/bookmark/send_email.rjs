@@ -1,0 +1,18 @@
+
+if @invalid_emails_message != nil
+	page.replace_html("taskdetails", :partial => "send" ,:locals => { :id => @bookmark, :contents => @emails})
+else
+    page.replace_html("taskdetails", :partial => "taskdetails") 
+end
+
+page.replace_html 'flash-notice', @flash_message
+
+
+page.show 'flash-notice'
+#page.visual_effect :pulsate, 'flash-notice' #highlight
+page.delay(3) do
+	#page.replace_html 'success', ""
+	#page.visual_effect :fade, 'flash-notice'
+end
+
+				

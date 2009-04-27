@@ -1,0 +1,160 @@
+<% control_id = "feed_item_emails_#{feeditem.id}" %>
+<script type="text/javascript">
+        function onABCommComplete() {
+                Plaxo.abl.abWin.close();
+        }
+ </script>
+<div id='feeditem_<%= feeditem.id %>' class = 'feeditem'>
+
+<div class = 'feeditem_title'><%= link_to feeditem.title, feeditem.url  %> </div>
+
+<div class="feedcontent">
+<%= feeditem.content %>
+</div>
+    <div id="feeditem_action_<%= feeditem.id %>" class="feeditem_action">
+        <ul>
+        <li  style="display: inline;"><%= link_to_function "Share",   visual_effect(:toggle_blind, "share-form_#{feeditem.id}", :duration => 0.5) %>  | </li>
+        
+        <% saved = feeditem.find_saved_item(subscription) %>
+        <% if saved %>
+                <li id="feeditem_save_<%= feeditem.id %>"  style="display: inline;">Saved </li>
+        <% else %>
+                <li id="feeditem_save_<%= feeditem.id %>"  style="display: inline;"><%= link_to_function "Save",   visual_effect(:toggle_blind, "save-form_#{feeditem.id}", :duration => 0.5) %>
+                </li>
+        <% end %>
+        <% if unread && !saved %>
+                <li id="feeditem_mark_read_<%= feeditem.id %>"  style="display: inline;"> | <img src="/images/checked.png" alt="" height = "16"  width ="16"/><%= link_to_remote "Mark as read", :url => {:action => "done", :subscription_id => subscription.id, :id => feeditem.id,:context => 'feed' } %>
+                </li>
+        <% end %>	
+        </ul>
+    </div>
+        <% if saved %>
+          <div id="show_comments">
+                <div class="row">
+                            <span class="label">My Tags:</span>
+                            <span class="formw"><%= feeditem.tags.collect{|t| t.name}.join("," ) %></span>                      
+                  </div>
+                <div class="row">
+                    <span class="label">My Comments:</span> 
+                    <% saved_comments = saved.comments %>
+                    <span	class="formw"><%= saved.comments -%></span>
+                 </div>                
+                <div class="row">
+                <span class="show-label">Associated Tasks: </span>
+                <span class="show-value">
+                        <% if feeditem.entries.size == 0 %>
+                                None
+                        <% else %>
+                          <ul>
+                          <% feeditem.entries.each {|entry| %>
+                                  <% if is_owner(entry)  || entry.public? then %>
+                                      <li><%= link_to_remote h(entry.title.capitalize), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => 'feed', :displayonly => true} %></li>
+                                  <% else %>
+                                      <ul><li>Task is private</li></ul>  
+                                  <% end %>				
+                          <% } %>
+                          </ul>
+                        <% end %>
+                </span>
+              </div>
+                <div class="row">
+                        <span class="show-label">Public:  </span>
+                        <span class="show-value"><%= if saved.public then "Yes" else "No" end   %></span>
+                </div>
+          </div>
+        <% end %>
+	<!-- Form to save feed -->
+        <div id="save-form_<%= feeditem.id %>" class= "save-form" style="display: none;">                
+            <% remote_form_for :feed_item, :url => {:controller => :feed_item ,:action => 'save', :id => feeditem.id,:context => 'feed',
+              :subscription_id => subscription.id, :update => "feeditem_save_#{feeditem.id}"},
+              :before => "Element.show('share_spinner_#{feeditem.id}');" ,:complete => "Element.hide('share_spinner_#{feeditem.id}');" do |form| -%>
+                <div class="row">
+                        <span class="label">Tags:</span>
+                        <span class="formw"><%= text_field_with_auto_complete :feed_item, :tag_list ,{:skip_style => true}, :tokens => ',' -%>(comma separated) </span>
+                       <%= form.hidden_field :user_id, :value => current_user.id -%>                      
+              </div>
+              <%= observe_field "feed_item_tag_list",:frequency => 1,
+               :url => { :action => "filter_resources"},
+              :with => "'taglist=' + escape(value)" %>
+              <div class="row">
+                <span class="label">My Comments:</span> 
+                <% max = 1000; dom_id = "length_alert_save_#{feeditem.id}" %>
+                 <span	class="formw"><%= text_area_tag :comments,nil,:cols => "37", :rows => "4",
+                                                  :onkeyup => " if (this.value.strip().length > #{max})
+                                                    {this.value = this.value.substring(0, #{max});
+                                                    $('#{dom_id}').update(#{max} + ' limit exceeded' ); }
+                                                    else  $('#{dom_id}').update(#{max}-this.value.strip().length); " -%>
+				<br/>characters left : <span id = "length_alert_save_<%= feeditem.id %>" class = "length_alert"><%= max = 1000 %></span></span>
+              </div>
+              <div class="row">
+                    <span class="label">Public:</span>
+                    <span class="formw"><%= check_box_tag :public,1,true %>
+                    </span>
+              </div> 
+             <% if @entries && @entries.size > 0 %>
+              <div class="row">
+			<span class="label">Associate with tasks:</span>
+			<span	class="formw">
+                        <div id = 'link-tasks'>
+                        <%= select_tag 'parent_tasks[]',    options_for_select(@entries.collect{|e| [ e.title,e.id ]} ),  { :multiple => true, :size =>2,:include_blank => true } %>
+                        </div>
+			</span>
+		</div>
+              <% end %>
+              <div class="submit">
+                        <%= submit_tag "Save" , :onclick => visual_effect(:toggle_blind, "save-form_#{feeditem.id}", :duration => 0.5) %> or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, "save-form_#{feeditem.id}", :duration => 0.5) %>
+                </div>
+                    <div class="spacer">
+                      &nbsp;
+                    </div> 
+                    <div class="spacer">
+                      &nbsp;
+                    </div> 
+              <% end %>
+        </div>
+        <!--Form to send mail-->
+        <%= image_tag 'loading.gif', :id=>"share_spinner_#{feeditem.id}", :class => "share_spinner", :style=>"display:none;" %>
+         <div id="share-form-status_<%= feeditem.id %>" class= "share-form-status" >         </div>
+        <div id="share-form_<%= feeditem.id %>" class= "share-form" style="display: none;">                
+                <% remote_form_for :feed_item, :url => {:controller => 'feed_item',:action => 'share', :id => feeditem.id, :update => "share-form-status_#{feeditem.id}"}, :before => "Element.show('share_spinner_#{feeditem.id}');" ,
+                                                                                                                             :complete => "Element.hide('share_spinner_#{feeditem.id}');" do |form| -%>
+                        <div class="row">
+                                <span class="label">Share with others:</span>
+                                <span	class="formw">
+                                <% control_id = "feed_item_emails_#{feeditem.id}" %>
+                                <%= link_to image_tag("http://www.plaxo.com/images/abc/buttons/add_button.gif", :border=>0),"#",
+                                                                        :onclick => "showPlaxoABChooser('#{control_id}', '/home/plaxo'); return false;" %>     <br/>                          
+                                <%= form.text_area "emails_#{feeditem.id}" ,:cols => "27", :rows => "4" %><br/>(Enter email addresses separated by comma) </span>
+                        </div>                    
+                    <div class="row">
+                        <span class="label">My Comments:</span>
+                        <% saved_comments = saved_comments ? saved_comments : "" %>   
+                        <% max = 1000; dom_id = "length_alert_share_#{feeditem.id}" %>                        
+                        <span class="formw"><%= text_area_tag :comments,saved_comments,:cols => "37", :rows => "4",
+                                      :onkeyup => " if (this.value.strip().length > #{max})
+                                                    {this.value = this.value.substring(0, #{max});
+                                                    $('#{dom_id}').update(#{max} + ' limit exceeded' ); }
+                                                    else  $('#{dom_id}').update(#{max}-this.value.strip().length); " -%>
+				<br/>characters left :<span id = "length_alert_share_<%= feeditem.id %>" class = "length_alert"><%= 1000 - saved_comments.length %></span></span>	
+                      </div>
+                      <div class="submit">
+                                <%= submit_tag "Share" , :onclick => visual_effect(:toggle_blind, "share-form_#{feeditem.id}", :duration => 0.5) %> or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, "share-form_#{feeditem.id}", :duration => 0.5) %>
+                        </div>
+                      <div class="spacer">
+                      &nbsp;
+                    </div> 
+                    <div class="spacer">
+                      &nbsp;
+                    </div> 
+                  <% end %>
+        </div>
+
+
+         <div id="time">
+	<%= feeditem.published.strftime('%a, %b %d  %I:%M %p') %>
+	</div>
+
+
+
+
+</div>

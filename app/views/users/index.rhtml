@@ -1,0 +1,59 @@
+
+<div id="content">
+        <div class="row">
+	  <span class="label">Username:</span>
+	  <span	class="formw"><%= @user.login %></span>
+				
+	</div>
+	<div class="row">
+	  <span class="label">Email:</span>
+	   <span class="formw"><%= in_place_editor_field :user, :email, {},  {:external_control => "edit_email", :size => 30,:maxlength => 100} %></span>
+	</div>
+	<div class="row">
+       
+	  <span class="label">Time Zone:</span>
+	  <span	class="formw">                   
+                    
+                           <%= in_place_select_editor_field(
+                               :user,
+                               :time_zone,
+                              {},
+                               :select_options => time_zone_options_for_select(selected = nil, priority_zones = nil, model = TimeZone)
+                               )
+                          %>
+                   
+                  </span>
+	</div>
+	<div class="row">
+	  <span class="label">Member since:</span>
+	  <span	class="formw"><%= tz(@user.activated_at).to_date.to_s(:long)  %></span>
+	</div>
+    <div class="spacer">
+	  &nbsp;
+	</div>
+	
+	<div id="addnew">
+		
+                <%= link_to_remote "Change password", :url => { :action => :change_password}  %>
+                 <% hidden_div_if( flash[:notice] == nil , :id => "flash-message") do %>
+                        <%= flash[:notice] %>
+                <% end %>
+                <% hidden_div_if( flash[:error] == nil , :id => "flash-error") do %>
+                        <%= error_messages_for :user %>
+                        <%= flash[:error] %>
+                <% end %>
+
+
+                <div id="change-form">
+                </div>
+	</div>
+	
+    
+</div>
+
+
+
+
+<div class="spacer">
+	  &nbsp;
+</div>

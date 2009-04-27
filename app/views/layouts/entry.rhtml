@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+<head>
+    <title>StreamLife</title>
+    <link type="text/css" rel="Stylesheet"  href="/stylesheets/tasks.css"/>
+    <link type="text/css" rel="Stylesheet"  href="/stylesheets/main.css"/>
+   
+<!--[if IE]>
+<link rel="stylesheet" href="/stylesheets/ie.css” type=”text/css” />
+<![endif]-->
+
+	<%= javascript_include_tag :defaults %>
+	<%= javascript_include_tag "prototype", "effects", "controls" %>
+	<%= calendar_date_select_includes "silver" %>
+</head>
+<body align="center">
+<div id="header">
+    <p id="logo">
+		<img src="/images/pb-logo.png" alt="" /><br />
+        <span></span>
+	</p>
+
+    
+    <ul id="user_action">
+        <% if logged_in? %>
+            <li id="nav_loggedin">Welcome <a href="/home"><%= current_user.login %></a> | <a href="/logout">Log out</a></li>
+        <% else %>
+            <li id="Li1"><a href="/signup">Signup</a>	| <a href="/login">Log in</a></li>	
+        <% end %>
+	    	    
+    </ul>
+
+	
+</div>
+<div id="main"> 
+   
+	<% if logged_in? %>
+		<div id="tabs5">
+			<ul>
+								<!-- CSS Tabs -->
+			<li><a href="/"><span>StreamLife</span></a></li>
+			<li><a href="/home"><span>MyStreamLife</span></a></li>
+			<li id="current"><a href="/entry"><span>Tasks</span></a></li>
+			<li><a href="/bookmark"><span>Bookmarks</span></a></li>
+			<li><a href="/feed"><span>Feeds</span></a></li>
+			<li><a href="/users"><span>My Account</span></a></li>
+
+			</ul>
+		</div>
+
+	<% end %>	
+	<%= image_tag 'loading.gif', :id=>'spinner', :style=>"display:none;" %>
+
+   <%= @content_for_layout %>
+   
+   <div id="footer">
+		        <ul>
+            <li><a href="/" title="">Home</a></li>
+            <li><a href="/" title="">About StreamLife</a></li>
+            <li><a href="/" title="">Help</a></li>
+
+            <li><a href="/" title="Terms of Use">Terms of Use</a></li>
+            
+            
+            <li><a href="/" title="Sitemap">Site map</a></li>
+        </ul>
+       
+
+    </div>
+</div>
+
+  
+ </body>
+</html>

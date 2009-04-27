@@ -1,0 +1,55 @@
+<div id="contents">
+ <% is_goal = entry_item.entry[:type] == 'Goal' %>
+      <% if duetoday || outline %>
+              <% skipped = entry_item.skipped_on  %> 
+              <% if skipped && skipped.has_key?("#{TzTime.now.to_date}") && !entry_item.ended? %>
+                    <img src="/images/skipped.png" alt="" height = "16"  width ="16" title="Skipped"/>
+              <% elsif  entry_item.completion_history["#{TzTime.now.to_date}"] != "" %>
+                    <img src="/images/checked.png" alt="" height = "16"  width ="16" title="Checked"/>
+              <% elsif entry_item.entry.priority == 3 %>
+                    <img src="/images/pending.png" alt="" height = "16"  width ="16"  title="High Priority"/>
+               <% else %>
+                    <img src="/images/pending-low.png" alt="" height = "16"  width ="16"  title="Low Priority"/>
+              <% end %> 
+        <% else %>
+              <% if entry_item.is_pending %>
+                     <% if entry_item.entry.priority == 3 %>
+                            <img src="/images/pending.png" alt="" height = "16"  width ="16"  title="High Priority"/>
+                      <% else %>
+                            <img src="/images/pending-low.png" alt="" height = "16"  width ="16"  title="Low Priority"/>
+                      <% end %> 
+              <% else %>
+                    <img src="/images/checked.png" alt="" height = "16"  width ="16" title="Checked"/>
+              <% end %>
+        <% end %>
+        
+        <% if !outline %>
+              <img src="/images/drag_drop.gif" alt="" height = "11"  width ="11" title="Drag and Drop to prioritize"/>
+              <%= link_to_remote h(entry_item.entry.title), :url => { :controller => 'entry',:action => "show", :id => entry_item.entry.id, :incontext => "task", :duetoday => duetoday} %>
+        <% else %>
+              <%= link_to h(entry_item.entry.title), :controller => "entry", :action => "show", :id => entry_item.entry.id, :incontext => "task", :duetoday => duetoday %>
+        <% end %>
+        <% if !outline %>
+              <% if duetoday %>
+                    <% if entry_item.completion_history["#{TzTime.now.to_date}"] == "" %>
+                          <div id="wrapper">
+                                <ul><li> 
+                                      <% if is_goal %>
+                                          <%= link_to_remote 'Reviewed', :url => {:controller => 'entry_status', :action => :done, :id => entry_item.entry.id, :incontext => "task"} %> 
+                                      <% else %>
+                                         <%= link_to_remote 'Done', :url => {:controller => 'entry_status', :action => :done, :id => entry_item.entry.id, :incontext => "task"} %>  |
+                                         <%= link_to_remote 'Skip', :url => {:controller => 'entry_status', :action => :skip, :id => entry_item.entry.id, :incontext => "task"} %> 				
+                                      <% end %>  
+                                </li></ul> 
+                          </div>
+                    <% elsif !entry_item.ended? %>
+                          <div id="wrapper"> 
+                                <ul><li> 
+                                <%= link_to_remote 'Undo', :url => {:controller => 'entry_status', :action => :undone, :id => entry_item.entry.id, :incontext => "task"} %> 
+                                </li></ul>
+                          </div>
+                    <% end %>      
+              <% end %>			
+        <% end %>
+        
+ </div>

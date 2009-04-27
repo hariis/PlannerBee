@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<title>StreamLife, one place to store,schedule,organize your tasks and the relevant resources</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/welcome.css" />
+       <%= stylesheet_link_tag 'acts_as_taggable_stylesheet' %>   
+<!--[if IE]>
+<link rel="stylesheet" href="/stylesheets/ie.css” type=”text/css” />
+<![endif]-->
+	
+	<%= javascript_include_tag :defaults %>
+	<%= javascript_include_tag "prototype" %>
+	<%= calendar_date_select_includes "silver" %>
+	<script  type="text/javascript"  src="firebug/firebug.js"></script>
+	
+</head>
+<body>
+<div id="header">
+            <div id="logo">    
+            <img src="/images/pb-logo.png" alt="plannerbee logo" />
+            </div>
+            <ul id="user_action">
+                    <% if logged_in? %>
+                        <li id="nav_loggedin">Welcome <a href="/home"><%= current_user.login %></a> | <a href="/logout">Log out</a></li>
+                    <% else %>
+                        <li id="Li1"><a href="/signup">Signup</a>	| <a href="/login">Log in</a></li>	
+                    <% end %>
+
+                </ul>
+            <span class="pullquote_right"><p><em>We are what we repeatedly do. Excellence, therefore, is not an act, but a habit.     -Aristotle</em></p></span>
+</div>
+
+
+<% if !logged_in? %>
+<div id="tm" class = "box">
+<div class="title" style = "background:#92E305">Manage your tasks</div>
+<dl>
+  <dt><b>Create a Task </b>
+  <ul><li><em>say, Visit Farmer's market</em></li> </ul></dt>
+<dt><b>Schedule it as one-time or periodic</b>
+ <ul><li>repeating every Saturday</li> </ul></dt>
+<dt><b>Organize</b></dt>
+<dd>link to a Goal
+             <ul><li>Shop for weekly groceries</li> </ul></dd>
+<dd>link to sub-task(s)
+            <ul><li>Prepare Grocery list</li> </ul> </dd>
+<dt><b>Collect & Store relevant resources in one place</b></dt>
+<dd>link to bookmarks
+  <ul><li>localmarket.com</li>
+  <li>weather.com</li> 
+<li> maps.com</li> </ul></dd>
+ <dd>link to blog posts <ul><li>Tips on Getting good deals in farmer markets</li> </ul></dd>
+
+<dt>When the scheduled day rolls along,
+ the task and <i>every piece of information you have collected
+ to get it done appears on your 'Tasks' page</i>
+along with the rest of the tasks for the day.</dt>
+<dt>You can drag the items up and down to prioritize</dt>
+<dt>If there are others doing similar tasks, you can view them
+and benefit from their collection of resources as well.</dt>
+
+</dl>
+</div>
+<div id="bm" class = "box">
+<div class="title" style = "background:#03A0E9">Manage your bookmarks</div>
+<p>Do you bookmark sites for later reading and
+wish you could be reminded about them?</p>
+<p>
+  <p>Now you can!</p>
+<p>While you save your bookmarks you can
+schedule them for reading one time or periodically.</p>
+<p>
+And when the scheduled day rolls along,
+the bookmark will show up right in your 'Bookmarks' page.</p>
+
+<p>
+You can also link them to your tasks as resources.</p>
+<p>You can share them with your friends, of course.</p>
+</div>
+
+<div id="fm"  class = "box">
+<div class="title"  style = "background:#f79e04">Manage your feeds</div>
+
+<p>Got tons of feeds (and even more unread items)
+but don't want to stare at them everyday and feel guilty, fear no more.
+</p>
+<p>
+Using this tool, when you subscribe to a feed,
+you can schedule your reading of it as well.
+</p>
+<p>On any given day, in your 'Feeds' page,
+you will only see feeds scheduled for that day.
+</p>
+<p>
+So now you can be sure your most obscure of feeds
+gets read at least once.
+</p>
+<p>You can also save individual posts with tags and comments.</p> 
+<p> These can be linked as resources in your tasks.</p>
+<p>You can share them with your friends, of course.</p>
+</div>
+
+<div id="action" class="box">
+    <div class="title">So, What's next?</div>
+
+	<div id="authform">	  
+		<dt id = "goal">Make life simpler</dt>
+		<dd><%= link_to "Signup for an account", :controller => "users", :action => "new"  %></dd>
+		
+		<dd><%= link_to "Login",  :controller => "session",:action => "new"  %> and Use it daily</dd>  	
+	</div>
+
+</div>
+
+	
+<% end %>
+
+<div class="title" id="community">
+    PlannerBee community Buzz 
+</div>
+
+<div id="latest-tasks" class="latestbox latest">
+    <div class="title" style = "background:#92E305">Tasks done recently</div>
+    <ul>
+    <% for entry_details in @latest_entries %>
+      <li><img src="/images/checked.png" alt="" height = "16"  width ="16"/>
+        <%= entry_details.entry.title %> by <%= entry_details.user.login %></li>
+    <% end %>
+    </ul>
+	
+
+</div>
+<div id="latest-bookmarks" class="latestbox latest">
+    <div class="title" style = "background:#03A0E9">Bookmarks read recently</div>
+    <ul>
+    <% for entry_details in @latest_bookmarks %>
+      <li><img src="/images/checked.png" alt="" height = "16"  width ="16"/>
+        <%= entry_details.bookmark.resource.title %> by <%= entry_details.user.login %></li>
+    <% end %>
+    </ul>
+	
+
+</div>
+<div id="tagcloud-heading">Tag Cloud of the community </div>
+<%= tag_cloud %>
+<div id="footer">
+		        <ul>
+            <li><a href="/" title="Main Page">Home</a></li>
+            <li><a href="/" title="About StreamLife">About StreamLife</a></li>
+            <li><a href="/" title="Help">Help</a></li>
+
+            <li><a href="/" title="Terms of Use">Terms of Use</a></li>
+            
+            
+            <li><a href="/" title="Sitemap">Site map</a></li>
+        </ul>
+       
+
+    </div>
+</body>
+</html>

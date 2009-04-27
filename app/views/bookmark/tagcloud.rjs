@@ -1,0 +1,4 @@
+page.show 'results'
+page.hide 'taskdetails'
+page.replace_html("results", :partial => "results",  :locals => {:display_cloud => true, :display_results => false})		
+

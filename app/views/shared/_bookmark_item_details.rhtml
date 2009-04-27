@@ -1,0 +1,26 @@
+<div id="contents">
+    <% if bookmark_item.completion_history["#{TzTime.now.to_date}"] == "" %>  
+        <img src="/images/pending.png" alt="" height = "16"  width ="16"  title="Pending"/>
+    <% else %>
+        <img src="/images/checked.png" alt="" height = "16"  width ="16"  title="Checked"/>
+    <% end %>
+
+    <% title = truncate(h(bookmark_item.bookmark.resource.title), 30, "...") %>
+
+    <% if !outline %>
+        <img src="/images/drag_drop.gif" alt="" height = "11"  width ="11" title="Drag and Drop to prioritize"/>
+        <%= link_to_remote title.capitalize, :url => { :action => "show", :id => bookmark_item.bookmark.id, :incontext => "bookmark"} %>
+    <% else %>
+        <%= link_to title.capitalize, :controller => "bookmark", :action => "show", :id => bookmark_item.bookmark.id, :incontext => "bookmark" %>
+    <% end %>
+
+    <% if !outline %>
+        <% if bookmark_item.completion_history["#{TzTime.now.to_date}"] == "" %>  
+            <div id="wrapper">
+                <ul><li><%= link_to_remote "Mark Read",:url => { :controller => 'bookmark',:action => "done", :id => bookmark_item.bookmark.id, :incontext => "bookmark"} %> 
+                </li></ul> 
+            </div>
+        <% end %>
+    <% end %>
+
+  </div>

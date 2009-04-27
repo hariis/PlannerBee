@@ -1,0 +1,152 @@
+<script type="text/javascript">
+        function onABCommComplete() {              
+                Plaxo.abl.abWin.close();
+        }
+</script>
+<% if @showbookmark != nil %>
+<div  class="curves"><%= link_to  truncate(h(@showbookmark.resource.title.capitalize), 30, "...") , h(@showbookmark.resource.uri) %></div>
+
+<% if is_owner(@showbookmark) then %>	
+	
+        <div id="actions">       
+       <% still_active = @showbookmark.bookmark_status == nil  ||  !@showbookmark.bookmark_status.completed? %>
+		<ul>
+                   <span style="float:left;">	                       
+                  <li> <%= link_to_function image_tag('group.png',  :title => "Share with friends") + "Share",   visual_effect(:toggle_blind, 'share-form', :duration => 0.5) %>   </li>
+                  <li><%= link_to_remote  image_tag('end.png',  :title => "End reading this bookmark") + "End", :url => {:controller => 'bookmark',:action => "complete", :id => @showbookmark.id, :incontext => context} ,
+                          :confirm => "This action will clear all future instances of this bookmark. Please confirm",
+                            :before => "Element.show('end_progress')",:complete => "Element.hide('end_progress')"  if still_active && @showbookmark.is_periodic %>
+                            <%= image_tag 'spinner.gif', :id=>'end_progress', :style=>"display:none;" %>         </li> 
+                   </span>
+                    <span style="float:right;">	
+                       <li> <%= link_to_remote image_tag('edit.png',  :title => "Edit this bookmark") +  'Edit', :update => 'taskdetails', :url => {:action => 'edit', :id => @showbookmark.id, :incontext => context},
+                                :before => "Element.show('edit_progress')"  if still_active %>
+                                <%= image_tag 'spinner.gif', :id=>'edit_progress', :style=>"display:none;" %></li>        
+                        
+			<li><%= link_to  image_tag('delete.png',  :title => "Delete this task") +  "Delete", {:action => "destroy", :id => @showbookmark.id}, {:confirm => "Since 'Delete' action can't be Undone, please Confirm."} %>	</li>
+                    </span>
+		</ul> 
+	</div>
+<% else %>
+    <div id="actions">
+		<ul><li>
+                       <%= link_to_function "Share",   visual_effect(:toggle_blind, 'share-form', :duration => 0.5) %> | 			
+                       <%= link_to_remote "Clone this", :url => {:controller => 'bookmark',:action => 'copy', :id => @showbookmark.id, :incontext => context} , :update => { :success => "taskdetails" }, :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')",
+																				:complete => "Element.hide('spinner')" %>
+			</li>
+		</ul> 
+	</div>
+<% end %>
+        <%= image_tag 'loading.gif', :id=>'share_spinner', :style=>"display:none;" %>
+         <div id="share-form-status">  
+         </div>
+        <div id="share-form" style="display: none;">                
+                <% remote_form_for :bookmark, :url => {:action => 'share', :id => @showbookmark, :update => 'share-form-status'}, :before => "Element.show('share_spinner');Element.show('share-form-status')" ,
+                                                                                                                             :complete => "Element.hide('share_spinner')" do |form| -%>
+                        <div class="row">
+                              <span class="label">My Comments:</span>               
+                              <% max = 1000;  %>
+                             <% saved_comments = @showbookmark.notes ? @showbookmark.notes : "" %>                                
+                              <span class="formw"><%= text_area_tag :comments,h(saved_comments),:cols => "37", :rows => "4",
+                                            :onkeyup => " if (this.value.strip().length > #{max})
+                                                          {this.value = this.value.substring(0, #{max});
+                                                          $('length_alert_share').update(#{max} + ' limit exceeded' ); }
+                                                          else  $('length_alert_share').update(#{max}-this.value.strip().length); " -%>
+                                      <br/>characters left :<span id = "length_alert_share" class = "length_alert"><%= 1000 - saved_comments.length %></span></span>	
+                       </div>
+                        <div class="row">
+                                <span class="label">Share with others:</span>
+                                <span	class="formw">
+                                <a href="#" onclick="showPlaxoABChooser('bookmark_emails', '/home/plaxo'); return false"><img src="http://www.plaxo.com/images/abc/buttons/add_button.gif" alt="Add from my address book" /></a><br/>
+                                <%= form.text_area :emails,:cols => "27", :rows => "4" %><br/>(Enter email addresses separated by comma) </span>
+                        </div>
+                        
+                      <div class="submit">
+                                <%= submit_tag "Share"  , :onclick => visual_effect(:toggle_blind, "share-form", :duration => 0.5) %> or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, 'share-form', :duration => 0.5) %>
+                        </div>
+                  <% end %>
+        </div>
+
+ <% if is_owner(@showbookmark) then %>	   
+        <div id="status">
+                <div class="curves">Bookmark Details</div>			
+		<% if @showbookmark.bookmark_status && @showbookmark.bookmark_status.last_viewed %>
+                    <div class="row">
+			  <span class="show-label">Last read:  </span>
+			  <span	class="show-value"><%= relative_day(@showbookmark.bookmark_status.last_viewed) %> </span>
+                    </div>
+			 
+		<% end %>
+                <% if @showbookmark.bookmark_status && @showbookmark.bookmark_status.completed? %>
+                       <br/>
+                       <div class="row">
+			  <span class="show-value">Completed reading.</span>
+                        </div>                              
+                <% end%>
+	</div>
+<% end %>
+<% if is_owner(@showbookmark)  || @showbookmark.public? then %>
+	<div id="schedule">
+           <div id="schedule-heading" > Schedule </div>
+            <%= display_schedule(@showbookmark) %>
+        </div>
+<% end %>	
+	<div id="tasknotes">
+                <div class="row">
+			  <span class="show-label">Title:  </span>
+			  <span	class="show-value"><%=  h(@showbookmark.resource.title)  %></span>
+		</div>
+		<div class="row">
+			  <span class="show-label">URL:  </span>
+			  <span	class="show-value"><%= link_to h(@showbookmark.resource.uri) , h(@showbookmark.resource.uri)  %></span>
+		</div>
+
+		<div class="row">
+			  <span class="show-label">Notes:  </span>
+			  <span	class="show-value"><%= h(@showbookmark.notes)  %></span>
+		</div>
+		<div class="row">
+			  <span class="show-label">Tags:  </span>
+			  <span	class="show-value"><%= h(@showbookmark.tags.collect{|t| t.name}.join("," ))  %></span>
+		</div>
+<% if is_owner(@showbookmark) then %>	
+                <div class="row">
+			  <span class="show-label">Public:  </span>
+			  <span	class="show-value"><%= if @showbookmark.public then "Yes" else "No" end   %></span>
+		</div>
+<% end %>
+
+	</div>
+	<div id="taskattachments">
+                        <div class="curves">Associated Items</div>
+                        <div id ="ptask">Tasks: </div> 
+
+			<% if @showbookmark.entries.size == 0 %>
+				<ul><li>None</li></ul>
+			<% else %>
+                          <ul>
+                          <% @showbookmark.entries.each {|entry| %>
+                                  <% if is_owner(entry)  || entry.public? then %>
+                                      <li><%= link_to_remote h(entry.formatted_title), :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => context, :displayonly => true} %></li>
+                                  <% else %>
+                                      <ul><li>Task is private</li></ul>  
+                                  <% end %>				
+                          <% } %>
+                          </ul>
+			<% end %>
+	</div>
+	<div id="related">
+                <div  class="curves">Related Bookmarks</div>
+                 <% if related == nil %>
+                              <ul><li>None</li></ul>
+                      <% else %>
+                      <ul>
+                      <% related.each {|entry| %>
+                             <% if entry.user != current_user && entry != @showbookmark && entry.public? then %>
+                              <li><%= link_to_remote h(entry.title), :url => { :controller => 'bookmark', :action => "show", :id => entry.id, :incontext => context, :displayonly => true} %> by <%= "#{entry.user.login}" %></li>
+                              <% end %>
+                      <% } %>
+                      </ul>
+                      <% end %>           
+	</div>    
+<% end %>

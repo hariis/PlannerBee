@@ -1,0 +1,420 @@
+
+*{
+margin:0pt;
+padding:0pt;
+}
+body {
+background-color:#FFFFFF;
+font-family: arial,verdana,"lucida grande",tahoma,georgia,sans-serif;
+font-size:85%;
+color: #333333;
+}
+a:active, a:focus{
+   outline:none;
+}
+a img{
+border-style: none;
+}
+div#main{
+margin:25px auto;
+max-width:75em;
+min-width:70em;
+}
+div#header {
+text-align:right;
+height: 100px;
+}
+#header div#logo {
+float: left;
+}
+div#logo img{
+border-style: none;
+}
+div#header ul#user_action {
+margin:20px 20% 5px;
+}
+
+ul#user_action li {
+background-position:0pt 50%;
+background-repeat:no-repeat;
+display:inline;
+margin-left:1em;
+padding-left:1.5em;
+font-size:125%;
+font-family:arial;
+}
+ul, ol {
+margin:0pt 0pt 2.6em 2.6em;
+}
+div#main div#content
+{
+clear:both;
+border:1px solid #EEEEEE;
+height:100%;
+padding:15px 25px;
+
+text-align:center;
+}
+div.acontent {
+float:left;	
+margin: 10px;
+padding: 0px;
+width:250px;
+
+
+background:#E3F3C6;
+
+border-color:#CCCCCC rgb(153, 153, 153) rgb(153, 153, 153) rgb(204, 204, 204);
+
+border-style:solid;
+border-width: 1px;
+margin-bottom: 1.5em;
+
+}
+
+p.q {
+font-family:Georgia,"Times New Roman",Times,serif;
+font-size:18px;
+line-height:28px;
+text-align:center;
+ font-style:italic;
+ margin-bottom:10px;
+ background:#E3F3C6;
+}
+div.a {
+font-family:Georgia,"Times New Roman",Times,serif;
+font-size:18px;
+line-height:28px;
+text-align:justify;
+ margin-bottom:10px;
+}
+div.a li
+{
+	text-align:justify;
+}
+div.a .example
+{
+	 margin-left:50px;
+     color:#30A1EF;
+}
+div.summary
+{
+	color:#0877C4;
+	font-size:larger;
+	font-family:Arial,Helvetica,sans-serif;
+}
+div#footer 
+{
+	margin-top:50px;
+	clear:both;
+border-bottom:1px solid #DDDDDD;
+border-top:1px solid #DDDDDD;
+padding:10px 0pt;
+}
+#footer ul {
+font-size:80%;
+margin:0pt auto;
+text-align:center;
+width:90%;
+}
+#footer ul li {
+display:inline;
+padding:2.2%;
+}
+div#sub_footer {
+font-size:80%;
+margin:25px 0pt;
+}
+
+
+div.row {
+  clear: both;
+  padding-top: 10px;
+  padding-bottom: 20px;  
+  }
+div.display-row {
+  clear: both;  
+  padding-bottom: 20px;  
+  padding-left:40px;
+  }
+div.row span.label {
+  float: left;
+  width: 14%;
+  text-align: right;
+  }
+div.wide-row span.label {
+  float: left;
+  width: 14%;
+  text-align: right;
+  }
+div.row span.formw {
+  float: right;
+  width: 84%;
+  text-align: left;
+  }
+  div.wide-row span.formw {
+  float: right;
+  width: 84%;
+  text-align: left;
+  }
+  div#change-form input{
+     font-size: 18px;
+    font-weight: bold;   
+    float: none;   
+}
+span.info{
+    font-size:90%;
+    padding-right:100px;
+    color: #107CE0;
+}
+div#options input,select{
+
+}
+div#addnew {
+float: right;
+width:450px;
+}
+div#addnewfeed {
+float:right;
+width:450px;
+}
+div#addnew div#flash-message{
+color: #008000;
+border: 1px solid #008000;
+margin-top: 7px;
+text-align: center;
+}
+div#addnew div#flash-error{
+color: #ff0000;
+border: 1px solid #ff0000;
+margin-top: 7px;
+text-align: center;
+}
+div#addnew a:link
+{
+    color:#0000ff;
+    text-decoration :none	
+}
+div#change-form{
+background-color: #dadada;
+font-size: 85%;
+}
+  div.row span.show-label {
+  float: left;
+  width: 14%;
+  text-align: right;
+  margin-right: 5px;
+  }
+
+div.row span.show-value { 
+  width: 84%;
+  text-align: left;
+   float: right;
+  }
+#length_alert,span.length_alert {
+background-color:yellow;
+width: 445px;
+text-align: center;
+}
+
+fieldset input,textarea,select {
+border:1px solid #75BF00;
+font-family:Arial;
+color: #333333;
+font-size:13px;
+margin-bottom:3px;
+padding:3px;
+width:435px;
+}
+span.history-status select{
+width:90px;
+padding: 0px;
+font-size:12px;
+}
+span.narrow input{
+width: 35px;
+height: 18px;
+}
+span.narrow select{
+width: 95px;
+}
+fieldset {
+margin:0pt 0pt 0px;
+padding:15px;
+border-color:#000000 -moz-use-text-color -moz-use-text-color;
+border-style:solid none none;
+border-width:1px 0pt 0pt;
+}
+fieldset select {
+width:450px;
+}
+fieldset.schedule select{
+background-color: #d8e9f7;
+}
+fieldset legend{
+color:#107CE0;
+font-family:helvetica;
+font-size:150%;
+font-weight:bold;
+}
+#queryheading select{
+width:235px;
+margin: 0px;
+padding: 0px;
+font-size:14px;
+height:20px;
+background-color:#acbdec;
+}
+.toggler{
+font-size: 60%;
+font-family: arial;
+}
+div#cal input {
+font-weight:bold;
+margin-bottom:3px;
+width:235px;
+}
+
+
+fieldset#options input {
+margin-bottom:3px;
+width:20px;
+height:20px;
+}
+
+fieldset#options select {
+margin-bottom:3px;
+width:100px;
+}
+
+div.submit{
+float: right;
+  width: 435px;
+  text-align: left;
+  margin-top:20px;
+}
+div.submit input {
+height:30px;
+width:80px;
+font-weight:bold;
+font-size:18px;
+
+}
+
+div.submit  a {
+font-size:18px;
+font-weight:bold;
+color:#FF0000;
+}
+#spinner{
+	position: absolute; top: 50em; left: 50%;
+}
+#nav_spinner{
+    margin-left: 33%;
+}
+.share_spinner, #share_spinner{
+    margin-left: 50%;
+}
+#feedback-invoke{
+height:auto;
+position:absolute;
+right:0pt;
+text-align:left;
+top:120px;
+width:auto;
+z-index:2000;
+}
+#feedback-invoke a{
+background-color:#A9ED2E;
+border:3px solid #80C00C;
+color:#000000;
+font-weight:bold;
+padding:4px;
+}
+#feedback {
+background-color:#A9ED2E;
+height:auto;
+position:absolute;
+right:0pt;
+text-align:left;
+top:340px;
+width:auto;
+z-index:2000;
+padding: 20px;
+font-family: Georgia,serif;
+font-size: 12px;
+}
+select#comment_type{
+width: 270px;
+padding:0px;
+font-family: Georgia,serif;
+}
+textarea#comment_text{
+padding: 5px;  width: 255px;
+font-family: Georgia,serif;
+}
+/*- Menu Tabs 5--------------------------- */
+
+    #tabs5 {
+      float:left;
+      width:100%;
+      background:#FFFFFF;
+      
+      line-height:normal;
+	  	
+      }
+    #tabs5 ul {
+          margin:0;
+          padding:0px;
+          list-style:none;
+      }
+    #tabs5 li {
+      display:inline;
+      margin:0;
+      padding:0;
+      }
+    #tabs5 a {
+      float:left;
+      background:url("/images/tableft5.gif") no-repeat left top;
+      margin:0;
+      padding:0 0 0 4px;
+      text-decoration:none;
+      }
+    #tabs5 a span {
+      float:left;
+      display:block;
+      background:url("/images/tabright5.gif") no-repeat right top;
+      padding:5px 15px 4px 6px;
+      color:#FFF;
+      }
+    /* Commented Backslash Hack hides rule from IE5-Mac \*/
+    #tabs5 a span {float:none;}
+    /* End IE5-Mac hack */
+    #tabs5 a:hover span {
+      color:#FFF;
+      }
+    #tabs5 a:hover {
+      background-position:0% -42px;
+      }
+    #tabs5 a:hover span {
+      background-position:100% -42px;
+      }
+
+      #tabs5 #current a {
+              background-position:0% -42px;
+      }
+      #tabs5 #current a span {
+              background-position:100% -42px;
+      }
+
+a:link {color:#0077BB;text-decoration: none;}
+a:hover {color: red;}
+a:link img{border: none;}
+
+span.tagline{
+color:#00cc00;
+font-weight:bold;
+font-size:100%;
+font-family:Trebuchet MS,Helvetica;
+padding-left:20px;
+}

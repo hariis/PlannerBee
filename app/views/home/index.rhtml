@@ -1,0 +1,52 @@
+<link type="text/css" rel="stylesheet"  href="/stylesheets/home.css"/>
+<div id="feedcontainer">             
+            <div id="feedheader">
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+                <div id="context-title">
+                <%= TzTime.now.to_date.to_s(:long) %>
+                </div>
+                <div class="spacer">
+                  &nbsp;
+                </div>
+            </div>
+			  
+    <div id="article"> 
+                <% hidden_div_if( flash[:notice] == nil , :id => "notice") do %>		
+			<%= flash[:notice] %>
+		<% end %>
+		<div class="spacer">
+		  &nbsp;
+		</div> 
+              <div id="download">
+              <a href="/plannerbeebar.xpi">Download the PlannerBeeBar,</a> a handy FireFox extension that conveniently displays your tasks due on a toolbar. <br/>
+              Your last excuse has now been thwarted :)
+              </div>
+		<div id="feednav" class="module">
+	                <div id="tasksheading" class = "module-header">Tasks today</div>
+                              <ul id="task_list" class = "items">
+                                              <!-- List tasks -->
+                                              <%= render :partial => 'shared/entries', :locals => {:duetoday => true, :outline => true } %>
+                              </ul>
+		</div>
+		
+		<div id="feednav" class="module">
+			<div id="queryheading"  class = "module-header">Bookmarks Today</div>
+			<ul id="task_list" class = "items">
+			<%= render :partial => 'shared/bookmarks', :locals => {:outline => true } %>
+			</ul>
+                 </div>
+		<div id="feednav" class="module">
+			<div id="feeds-today"  class = "module-header">Feeds Today</div>
+			<ul id="task_list"  class = "items">
+			<%= render :partial => 'shared/subscriptions', :locals => {:unread => true, :outline => true, :section => 1 } %>
+
+			</ul>
+		</div>			
+		<div class="spacer">
+		  &nbsp;
+		</div> 
+	</div>
+</div>
+

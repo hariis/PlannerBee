@@ -1,0 +1,8 @@
+<%= link_to @entry.formatted_title, :action => :show, :id => @entry.id %>
+	<ul><li><%= link_to 'Done', {:controller => 'entry_status', :action => :done, :id => @entry.id} %> |
+		<%= link_to 'Skip', {:controller => 'entry_status',:action => :skip, :id => @entry.id} %> |
+		<%= link_to 'End', {:controller => 'entry_status',:action => :complete, :id => @entry.id} %> |
+		<%= link_to_remote 'Edit', :update => 'taskdetails', :url => {:action => 'edit', :id => @entry.id} %>  |
+		<%= link_to 'Delete', {:action => :destroy, :id => @entry.id} %>
+		</li>
+	</ul> 

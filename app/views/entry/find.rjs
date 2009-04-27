@@ -1,0 +1,3 @@
+page.show 'results'
+page.hide 'taskdetails'
+page.replace_html("results", :partial => "results", :object => @entries, :locals => {:results_heading => @results_heading, :display_results => true})		

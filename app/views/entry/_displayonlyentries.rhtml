@@ -1,0 +1,5 @@
+<% if displayonlyentries && displayonlyentries.size != 0 %>
+	 <%= render(:partial => "entry/displayonly_entry_item", :collection => displayonlyentries) %>	 
+<% else %>
+   None
+<% end %>

@@ -1,0 +1,30 @@
+<div id="contents">
+
+  <% if unread %>
+          <% if subscription_item.unread > 0 %>
+          <img src="/images/pending.png" alt="" height = "16"  width ="16"/>
+          <% else %>
+          <img src="/images/checked.png" alt="" height = "16"  width ="16"/>  
+          <% end %>
+          <% if !outline %>
+              <%= link_to_remote subscription_item.feed.title + " (" + subscription_item.unread.to_s + ")", :update => 'feeddetails',:url => { :controller => 'feed', :action => "show", :id => subscription_item.feed.id, :unread => unread,:section => section } %>
+          <% else %>
+                  <%= subscription_item.feed.title + " (" + subscription_item.unread.to_s + ")" %>
+          <% end %>
+  <% elsif section == 3 %>
+          <img src="/images/checked.png" alt="" height = "16"  width ="16"/>
+          <%= link_to_remote subscription_item.feed.title + " (" + subscription_item.recently_read_count.to_s + ")", :update => 'feeddetails',:url => { :controller => 'feed', :action => "show", :id => subscription_item.feed.id, :unread => unread,:section => section } %>
+  <% end %>	
+
+	
+<% if !outline %>
+    <% if unread %>
+      <div id="wrapper">
+            <ul><li><%= link_to_remote 'Edit', :url => { :controller => 'feed', :action => 'edit', :id => subscription_item.feed.id} %>	|
+                    <%= link_to 'End', { :controller => 'feed', :action => :unsubscribe, :id => subscription_item.id } %> 
+                    </li>
+            </ul>
+      </div>
+    <% end %>
+<% end %>
+</div>

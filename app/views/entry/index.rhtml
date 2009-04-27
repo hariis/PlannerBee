@@ -1,0 +1,92 @@
+<div id="feedcontainer">             
+            <div id="feedheader"  class="border">
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+                <div id="context-title">
+                <%= TzTime.now.to_date.to_s(:long) %>
+                </div>
+								
+                <div id="addnew">                       
+                         <%= link_to_remote image_tag('addnew.png',  :title => "Add a new task"), :url => {:action => :new, :type=>'task'},:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')",
+                                                                                                                                        :complete => "Element.hide('spinner')"   %>
+                        <%= link_to_remote image_tag('addgoal.png',  :title => "Add a new goal"), :url => {:action => :new, :type=>'goal'},:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')",
+                                                                                                                                        :complete => "Element.hide('spinner')"   %>
+                </div>
+                <div id="searchform">
+                <% form_remote_tag :url => { :action => :find },:update => 'taskdetails', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML=''",
+                                                                                                                                        :complete => "Element.hide('spinner')" do -%>
+                        <p>Search my tasks  <span style="font-size:70%;">(Separate keywords with comma)</span></p>
+                        <%= text_field_tag('want','', {:size => 20, :maxlength => 20}) %> <%= submit_tag 'Show me' %>
+                        <span style="font-size:80%;"><%= link_to_remote 'Advanced Search', :update => 'taskdetails', :url => {:action => 'advanced_search'} , :method => 'get' , :before => "$('taskdetails').innerHTML='';$('flash-notice').innerHTML='';Element.hide('results');Element.show('taskdetails')"%></span><br/>
+                        
+                <% end -%>
+                </div>				
+                <div class="spacer"> &nbsp;   </div> 
+		<div class="spacer"> &nbsp;   </div>
+            </div>
+
+            <div id="feedbody">
+	        
+	        <div id="feednav" class="border">
+	                <div id="tasksheading" class="curves">Tasks today</div>
+					<ul id="task_list">
+							<!-- List tasks -->
+							<%= render :partial => 'shared/entries', :locals => {:duetoday => true, :outline => false  } %>
+					</ul>
+					<%= sortable_element 'task_list' , :url => { :action => 'save_order' } %>
+					<div id="overduetasksheading"  class="curves">Overdues</div>
+					<ul  id="overduetask_list">
+							<%= render :partial => 'shared/entries', :object => @overdues, :locals => {:duetoday => false, :outline => false  }  %>					
+					</ul>
+					<%= sortable_element 'overduetask_list' , :url => { :action => 'save_overdue_order' } %>
+					
+                                        <div id="queryheading"> <%=  select_tag 'query_type', options_for_select(@query_types.sort { |v1,v2| v1[1].to_i <=> v2[1].to_i}.collect{|k| [ k[0],k[1] ]}, 1) %></div>
+                                        <%= observe_field "query_type",:frequency => 0.25,
+                                         :url => { :action => "show_query_results"},
+                                        :with => "'query_type=' + escape(value)", 
+                                        :before => "Element.show('nav_spinner');$('query_results').innerHTML='';" ,
+                                         :complete => "Element.hide('nav_spinner')" %>
+
+                                          <%= image_tag 'loading.gif', :id=>'nav_spinner', :style=>"display:none;" %>
+                                        <div id="pick_a_date"  style ="display:none;">View tasks for <%= calendar_date_select_tag "future_date", TzTime.now.to_date , :time => false  %></div>
+                                       
+                                       <%= observe_field 'future_date', :update => 'query_results',:frequency => 0.25,
+                                                                                                             :url => { :action => :view_future},
+                                                                                                            :with => "'future_date=' + escape(value)", 
+                                                                                                          :before => "Element.show('nav_spinner');$('query_results').innerHTML='';" ,
+                                                                                                           :complete => "Element.hide('nav_spinner')" %>
+
+                                        <ul id="query_results"></ul>
+
+                                        <div id="addedheading"  class="curves">Added/Updated today </div>
+					<ul  id="addedtask_list">
+							<%= render :partial => 'displayonlyentries', :object => @addedtoday %>					
+					</ul>
+					 
+                                        
+                                          
+                        <div id="tagcloudheading"  class="curves"><%= link_to_remote "Where's my Focus?", :url => {:action => 'tagcloud'} %> </div>
+                        
+	        </div>
+            
+            <div id="results" class="curves" style = "display:none">
+	    </div>
+            <div id = "flash-notice">
+                   
+            </div>
+            <div id="taskdetails" class="curves">   
+                <% if @showentry != nil %>
+                    <%= render :partial => 'taskdetails' ,:locals => { :duetoday => @showentry.is_due_today, :displayonly => false,:overduetoday => @showentry.is_overdue_today, :children => @childentries, :parent => @parent, :context => @incontext, :related => @related }%>
+                <% else %>
+                 <%= render :partial => 'new' %>
+                <% end %>
+            </div>  
+            <div id="feeddetails"  style="display: none"> </div>
+            <div id="all_feed_items"  style="display: none"></div>
+            <div id="hide-details" style="display: none">
+    </div>    
+      
+
+</div>
+</div>

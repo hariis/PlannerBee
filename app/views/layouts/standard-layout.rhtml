@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+<head>
+    <title>PlannerBee, one place to store,schedule,organize your tasks along with relevant bookmarks and feed posts</title>    
+	<link type="text/css" rel="Stylesheet"  href="/stylesheets/welcome.css"/>
+          <style>
+                  span.tagline{
+                  color:#00cc00;
+                  font-weight:bold;
+                  font-size:100%;
+                  font-family:Trebuchet MS,Helvetica;
+                  padding-left:20px;
+                  }
+          </style>
+  <%= stylesheet_link_tag "in_place_styles" %>
+    <style>    
+	a:link {text-decoration: none}
+	a:hover {color: red;}    
+    </style>	
+	<%= javascript_include_tag :defaults, :cache => true %>	
+</head>
+<body align="center">
+<div id="header">
+    <div id="logo">
+		<img src="/images/pb-logo.png" alt="" /><br />
+               <span  class="tagline">It is not about <em><span style="color:red">what</span></em> you do but <em><span style="color:red">how.</span> </em></span>
+        <span></span>
+	</div>
+
+    
+    <ul id="user_action">
+        <% if logged_in?  %>
+            <li id="nav_loggedin">Welcome <a href="/home"><%= current_user.login %></a> | <a href="/logout">Log out</a></li>
+        <% else %>
+			<% if controller.controller_name == 'sessions' %>
+				<li id="Li1"></li>
+			<% else %>
+				<li id="Li1"><a href="/login">Log in</a></li>
+			<% end %>
+        <% end %>
+	    	    
+    </ul>
+
+	
+</div>
+<div id="main"> 
+   
+		
+   <%= @content_for_layout %>
+   
+   <div id="footer">
+		        <ul>
+            <li><a href="/" title="Main Page">© 2008 PlannerBee</a></li>
+            <li><a href="/" title="About StreamLife">About Us</a></li>
+            <li><a href="/" title="Help">Privacy Policy</a></li>
+            <li><a href="/" title="Terms of Use">Terms of Use</a></li> 
+        </ul>
+       
+
+    </div>
+</div>
+
+  
+ </body>
+</html>

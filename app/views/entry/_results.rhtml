@@ -1,0 +1,22 @@
+<% if display_results %>
+    <p class="curves"><%= results_heading %></p>
+    <% if results.size == 0 %>
+                    <ul><li>None</li></ul>
+    <% else %>
+    <ul>
+    <% results.each {|entry| %>			
+
+        <li><%= link_to_remote entry.formatted_title, :url => { :controller => 'entry', :action => "show", :id => entry.id, :incontext => "task", :displayonly => true} %></li>
+
+    <% } %>
+    </ul>
+    <% end %>
+<% elsif display_cloud %>
+    <% if current_user %>
+      <p class="curves">Tag cloud for all my tasks</p>
+	<%= tag_cloud_for_user(current_user,Entry) %>
+    <% else %>
+
+    <% end %>
+<% end %>
+

@@ -1,0 +1,58 @@
+<div id = "message">
+</div>
+
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+<div>
+<div  class="curves">Subscribe</div>
+</div>
+<% remote_form_for :feedsubscription, :url => {:controller => 'feed', :action => 'save', :update => 'feeddetails',:id => @feed.id, :context => @context}, :before => "Element.show('spinner');Element.hide('feeddetails')",
+															:complete => "Element.hide('spinner');Element.show('feeddetails')" do |form| -%>
+
+<fieldset>
+<LEGEND ACCESSKEY=S>Feed details</LEGEND>
+	<div class="row">
+		  <span class="label">Feed Url:</span>
+		  <span	class="formw"><%= text_field_tag :url, @feed.title, {:readonly => "true"} %></span>
+	</div>
+	
+	<div class="row">
+		  <span class="label">Title:</span>
+		  <span	class="formw"><%= text_field_tag :title, @feed.url, {:readonly => "true"} %></span>
+	</div>
+	
+	<div class="row">
+		  <span class="label">Tags:</span>
+		  <span	class="formw"><%= text_field_with_auto_complete :feedsubscription, :tag_list ,{:skip_style => true}, :tokens => ',' -%><br/>(comma separated) </span>							
+                <%= form.hidden_field :user_id, :value => current_user.id -%> 
+	</div>	
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=C>How often do you want to read?</LEGEND>
+
+
+<div class="row">
+<span class="label">Frequency:</span>
+	<span	class="formw"><%= select 'feedsubscription', 'freq_type', @freqtypes.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]} ,   :selected => '6'  %>
+	</span>
+</div>
+
+<%= observe_field "feedsubscription_freq_type", :update => "interval",:frequency => 0.25,
+ :url => { :action => "displaydate"},
+:with => "'freqtype=' + escape(value)" %>
+
+<div id = 'interval'>
+	<%= render :partial => "shared/displaydate" %>
+</div>
+
+</fieldset>
+
+
+<div class="submit">
+<%= submit_tag "Add" %> or <%= link_to "Cancel", :controller => :feed , :action => :index %>
+</div>
+</div>
+
+<% end -%>
+ 

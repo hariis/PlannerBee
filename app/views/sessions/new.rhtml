@@ -1,0 +1,51 @@
+
+
+<div id="headband">
+Login
+</div>
+<% hidden_div_if( flash[:error] == nil , :id => "flash-notice") do %>
+	<%= flash[:error] %>
+<% end %>
+<% hidden_div_if( flash[:notice] == nil , :id => "status-notice") do %>
+	<%= flash[:notice] %>
+<% end %>
+<div id="content">
+
+<% form_for :session, :url => {:action => :create} do |f| -%>
+
+	<div class="row">
+		  <span class="label">Username:</span>
+		  <span	class="formw"><%= text_field_tag 'login' %></span>
+	</div>
+	<div class="row">
+		  <span class="label">Password:</span>
+		  <span	class="formw"><%= password_field_tag 'password' %>
+		   </span>
+	</div>  
+	<div class="row">
+		  <span class="label"></span>
+		  <span	class="formw"><%= check_box_tag 'remember_me' %> Remember me</span>
+	</div>
+
+<!--
+<p>
+  ...or use:
+</p>
+	<div class="row">
+		  <span class="label">OpenID:</span>
+		  <span	class="formw">< text_field_tag "openid_url" %></span> 
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>
+-->
+	<div id="submit">
+		<%= submit_tag 'Sign in', :disable_with => "Signing in&hellip;" %> 
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>
+         <span style="font-size:12px;text-decoration: none"><%= link_to ' forgot password', "/forgot_password" %> |  <%= link_to ' resend activation', "/lost_activation" %> </span>
+<% end %>
+
+</div>

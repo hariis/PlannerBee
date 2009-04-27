@@ -1,0 +1,173 @@
+<div id = "message">
+</div>
+
+<div style="border: 0px solid #333; padding: 0px;
+margin: 0px auto;">
+ 
+<div  class="curves"><%=  @task ? "Start a new Task" : "Create a new Goal" %></div>
+
+
+<% remote_form_for :entry, :url => {:action => 'save', :task => @task, :update => 'taskdetails'}, :before => "Element.show('spinner');Element.hide('taskdetails')",
+                                                        :complete => "Element.hide('spinner')" do |form| %>
+
+<fieldset>
+  <LEGEND ACCESSKEY=S>Store <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :store, :duration => 0.5) %></span></LEGEND>
+	<div id="store">
+           <div class="row">
+		  <span class="label">Title:</span>
+		  <span	class="formw"><%= form.text_field :title, :size => 50,:maxlength => 50 -%><span style="font-size:80%;color:#ff0000;"> required</span></span>                  
+	</div>
+	<div class="row">
+		  <span class="label">Notes:</span>
+                  <% max = 1000 %>
+		  <span	class="formw"><%= form.text_area :notes,:cols => "52", :rows => "4",
+                                      :onkeyup => " if (this.value.strip().length > #{max})
+                                                    {this.value = this.value.substring(0, #{max});
+                                                    $('length_alert').update(#{max} + ' limit exceeded' ); }
+                                                    else  $('length_alert').update(#{max}-this.value.strip().length); " -%>
+                                    <br/><span class ="info">characters allowed : <span id = "length_alert"><%= max = 1000 %></span></span></span>		  
+	</div>
+	
+	<div class="row">
+		  <span class="label">Tags:</span>
+		  <span	class="formw"> <%= text_field_with_auto_complete :entry, :tag_list ,{:skip_style => true}, :tokens => ',' -%><br/>
+                   <span class ="info"> (comma separated)</span> </span>
+		 <%= form.hidden_field :user_id, :value => current_user.id -%>	                 
+       </div>
+<% if @task %>
+<%= observe_field "entry_tag_list",:frequency => 1, :url => { :action => "filter_task_resources"},:with => "'taglist=' + escape(value)" %>
+<% else %>
+<%= observe_field "entry_tag_list",:frequency => 1, :url => { :action => "filter_goal_resources"},:with => "'taglist=' + escape(value)" %>  
+<% end %>
+	<div class="row">
+			<span class="label">Share this:</span>
+			<span class="formw narrow"><%= form.check_box :public %></span>
+	</div>
+	<div class="row">
+			<span class="label">Priority:</span>
+			<span	class="formw"><%= select( 'entry', 'priority', { "Low - Nice to have it done" => "1",  "High - Absolutely MUST get done" => "3"}, :selected => "1") %>	</span>
+	</div>
+
+     </div>
+</fieldset>
+
+<fieldset>
+<LEGEND ACCESSKEY=O>Organize <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, :organize, :duration => 0.5) %></span></LEGEND>
+<div id="organize">
+<% if @task && @goals.size > 0 %>
+	<div class="row">
+			<span class="label">Goal:</span>
+			<span	class="formw">
+                        <div id = 'link-goal'>
+                            <%= select 'entry', 'belongs_to', @goals.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>                            
+                          </div>				
+			</span>
+	</div>
+<%end%> 	
+<% if @task && @parententries.size > 0 %>
+       <div class="row">
+			<span class="label">Parent Task:</span>
+			<span	class="formw">
+                        <div id = 'link-parent-tasks'>
+                            <%= select 'entry', 'parent_id', @parententries.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>
+                            <%= observe_field "entry_parent_id",:frequency => 0.25,
+				 :url => { :action => "displaychildtasks", :type => 'all'},
+				:with => "'taskid=' + escape(value)" %>
+                          </div>				
+			</span>
+	</div>	
+<%end%> 
+ 
+ <% if @childentries.size > 0 %>
+	<div class="row">
+			<span class="label">Sub Tasks:</span>
+			<span	class="formw">
+				<div id = 'link-child-tasks'>
+					<%= select_tag 'child_tasks[]',    options_for_select(@childentries.collect{|e| [ h(e.title),e.id ]} ),  { :multiple => true, :size => 4,:include_blank => true } if @childentries.size > 0%>
+				</div>
+			</span>
+	</div>	
+ <%end%>
+ 
+   <% if @bookmarks.size > 0 %>
+    
+	<div class="row">
+			<span class="label">Bookmarks:</span>
+                        <span	class="formw">
+                             <div id="link-bookmarks">			
+                                <%= select_tag 'bookmarks[]',    options_for_select(@bookmarks.collect{|e| [ h(e.resource.title),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %> 		                   
+                            </div>	
+                                 
+                                <li  style="display: inline;"><%= link_to_function "Quick Add a Bookmark",   visual_effect(:toggle_blind, "quickadd", :duration => 0.5), :before => "Element.hide('quickadd-status')" %>  </li>
+                                <%= image_tag 'loading.gif', :id=>"bk_spinner", :style=>"display:none;" %>
+                                <div id = "quickadd-status"></div>
+                              <div id="quickadd" style="display: none;background-color:#D8E1FC;height:130px;">
+                             
+                                      <div class="row">
+                                                <span class="label">Title:</span>
+                                                <span	class="formw"><%= text_field_tag :bktitle, nil, {:size => 50,:maxlength => 250} %></span>
+                                      </div>
+                                      <div class="row">
+                                                <span class="label">URL:</span>
+                                                <span	class="formw"><%= text_field_tag :bkurl, nil,:size => 250,:maxlength => 250 %></span>
+                                      </div>
+                                       
+                                  <div class="submit"><%= submit_to_remote 'add_btn', 'Add', :url => { :controller => 'bookmark', :action => 'quickadd' },
+                                                                :before => "Element.show('bk_spinner');Element.toggle( 'quickadd');" ,:complete => "Element.hide('bk_spinner')" ,
+                                                               :with => "'bktitle='+ escape($('bktitle').value) + '&bkurl=' + escape($('bkurl').value)+ '&bktags=' + escape($('entry_tag_list').value)" %>
+                                                           
+                                    or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, "quickadd", :duration => 0.5) %></div>                           
+                               
+                              </div>
+                    </span>  
+	</div>
+       
+ <%end%> 
+  <% if @saved_feed_items.size > 0 %>
+	<div class="row">
+			<span class="label">Feed Posts:</span>
+
+			<span	class="formw">
+                        <div id="link-posts">
+                        <%= select_tag 'feed_items[]',    options_for_select(@saved_feed_items.collect{|e| [ h(e.title + " - [" + e.feed.title + "]"),e.id ]} ),  { :multiple => true, :size => 4, :include_blank => true } %> 
+                         </div>          
+			</span>
+	
+	</div>
+	
+ <%end%> 
+</div>
+</fieldset>
+
+<fieldset class="schedule">
+<LEGEND ACCESSKEY=C><%=  @task ? "Schedule" : "How Often do you want to Review?" %> <span class="toggler"><%= link_to_function "[ Show | Hide ]",   visual_effect(:toggle_blind, 'schedule-form', :duration => 0.5) %></span></LEGEND>
+<div id="schedule-form">
+
+<div class="row">
+<span class="label">Frequency:</span>
+	<span	class="formw"><%= select 'entry', 'freq_type', @freqtypes.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]},   :selected => '1'  %>
+	</span>
+</div>
+
+  <span style="margin: 33%;"><%= image_tag 'spinner.gif', :id=>'freq_progress', :style=>"display:none;" %></span>
+<%= observe_field "entry_freq_type", :update => "interval",:frequency => 1, :before => "Element.show('freq_progress');", :complete => "Element.hide('freq_progress')",
+ :url => { :action => "displaydate"},
+:with => "'freqtype=' + escape(value)" %>
+
+<div id = 'interval'>
+
+</div>
+
+  </div>
+
+</fieldset>
+
+
+
+<div class="submit">
+<%= submit_tag "Add" %> or <%= link_to "Cancel", :controller => :entry , :action => :list %>
+</div>
+
+</div>
+<% end %>
+ 

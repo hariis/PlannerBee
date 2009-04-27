@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+<head>
+	<title>PlannerBee, one place to store,schedule,organize your tasks along with relevant bookmarks and feed posts</title>
+	
+        <link type="text/css" rel="stylesheet"  href="/stylesheets/tasks.css"/>
+	<link type="text/css" rel="stylesheet"  href="/stylesheets/main.css"/>
+       <%= stylesheet_link_tag 'acts_as_taggable_stylesheet' %>   
+<!--[if IE]>
+<link rel="stylesheet" href="/stylesheets/ie.css” type=”text/css” />
+<%= javascript_include_tag :defaults %>	
+<![endif]-->	
+	<%= javascript_include_tag :defaults, :cache => true %>	
+	<%= calendar_date_select_includes "silver" %>	
+        <script type="text/javascript" src="http://www.plaxo.com/css/m/js/util.js"></script>
+        <script type="text/javascript" src="http://www.plaxo.com/css/m/js/basic.js"></script>
+        <script type="text/javascript" src="http://www.plaxo.com/css/m/js/abc_launcher.js"></script>        
+</head>
+<body align="center">
+<div id="header">
+    <div id="logo">
+      <a href="/"><img src="/images/pb-logo.png" alt="" /></a><br />
+         <span class="tagline">It is not about <em><span style="color:red">what</span></em> you do but <em><span style="color:red">how.</span> </em></span>
+	</div>    
+    <ul id="user_action">
+        <% if logged_in? %>
+            <li id="nav_loggedin">Welcome <a href="/home"><%= current_user.login %></a> | <a href="/logout">Log out</a></li>
+        <% else %>
+            <li id="Li1"><a href="/signup">Signup</a>	| <a href="/login">Log in</a></li>	
+        <% end %>	    	    
+    </ul>	
+</div>
+<div id="main"> 
+  <span id="feedback-invoke" ><%= link_to_function "Got Feedback?",   visual_effect(:toggle_blind, "feedback", :duration => 0.5) %></span>
+          <div id="feedback" style="display: none;">
+               Your feedback is greatly appreciated :)
+               <% form_remote_tag :url => {:controller => controller.controller_name,:action => 'feedback'}  do %>
+                       <div class="row">
+                          To help us prioritize, please choose a type: <br/>
+                         <%= select_tag 'comment_type',    options_for_select(PlannerbeeComment::COMMENT_TYPES.sort { |v1,v2| v1[1].to_i <=> v2[1].to_i}.collect{|k| [ k[0],k[1] ]}, 1 ) %>
+                      </div>
+
+                      <div class="row">
+                       Your Comments:<br/>	 
+                       <%= text_area_tag :comment_text,"Let us know what you think!",:cols => "37", :rows => "4",
+                                                 :onblur=>"if (this.value == '') {this.value = 'Let us know what you think!';}" ,:onfocus=>"if (this.value == 'Let us know what you think!') {this.value = '';}" -%>                  
+                     </div>
+
+                     <%= submit_tag "Submit" , :onclick => visual_effect(:toggle_blind, "feedback", :duration => 0.5) %> or  <%= link_to_function "Cancel",   visual_effect(:toggle_blind, "feedback", :duration => 0.5) %>
+                <% end -%>
+        </div>
+             
+	<% if logged_in? %>
+        <%= render :partial => 'layouts/tab_display' %>
+	<% end %>	
+
+  <%= image_tag 'loading.gif', :id=>'spinner', :style=>"display:none;" %>
+  <%= @content_for_layout %>
+  <%= render :partial => 'layouts/footer' %>
+
+</div>
+
+  
+ </body>
+</html>

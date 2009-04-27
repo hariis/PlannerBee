@@ -1,0 +1,8 @@
+<li class = li_<%= displayonly_entry_item.id %> id= li_<%= displayonly_entry_item.id %> >
+
+<div id="contents">
+<%= link_to_remote h(displayonly_entry_item.title), :url => { :controller => 'entry',:action => "show", :id => displayonly_entry_item.id, :incontext => "task", :displayonly => true} %>
+       
+</div>
+</li>	
+

@@ -1,0 +1,12 @@
+.pullquote_right p:first-child {
+display: inline;
+margin: 0;
+padding: 0 38px 12px 0px;
+background-image: none !important;
+}
+
+body{behavior:url(/stylesheets/csshover2.htc);}
+
+#feednav ul li{float:left;height:1%;width:100%;}
+#feednav ul li a{height:1%;}
+

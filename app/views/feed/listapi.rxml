@@ -1,0 +1,25 @@
+
+xml.response(:code => @code, :feedcount => @feeds.size) do 
+ xml.timestamp(Time.now)
+            
+    xml.feeds do
+      #@feeds.each { |feed, items| 
+      @feeds.each { |feed, subscription|
+        items = Feedsubscription.GetFeedItems(subscription) 
+        xml.feed(:unread => subscription.unread) do
+            xml.title(feed.title)
+            
+            for item in items
+              xml.feeditem do
+                xml.title(item.title)
+                xml.published(item.published.strftime('%a, %b %d  %I:%M %p'))
+                xml.url(item.url)
+                xml.content(h(item.content))
+              end
+            end
+            
+        end
+      }
+    end
+end
+

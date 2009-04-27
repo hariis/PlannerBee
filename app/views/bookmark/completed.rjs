@@ -1,0 +1,30 @@
+if @context == "bookmark"
+	if @done || (@completed && @bookmark.is_due_today )
+              dom_id = "li_today_#{@bookmark.id}"              
+              page.replace_html(dom_id, :partial => "shared/bookmark_item_details",  :locals => {:bookmark_item => @bookmark_status, :outline => false })
+        end
+	if @overduedone || (@completed && @bookmark.is_overdue_today )
+              dom_id = "li_overdue_#{@bookmark.id}"              
+              page.replace_html(dom_id, :partial => "overdue_item_details",  :locals => {:overdue_item => @bookmark_status, :outline => false })
+        end
+         if @done || @overduedone
+                select_dom_id = "li#" + dom_id
+                page.select(select_dom_id).each { |b| b.visual_effect :highlight, :startcolor => "#eef106", :endcolor => "#ffffff", :duration => 5.0 } 
+        end
+        if @completed             
+                page.select(".li_#{@bookmark.id}").each { |b| b.visual_effect :highlight, :startcolor => "#88ff88",  :endcolor => "#ffffff", :duration => 7.0 } 
+        end
+end
+
+page.replace_html 'flash-notice', "<div id='success'> #{@bookmark.resource.title} marked read</div>"
+page.show 'flash-notice'
+
+page.delay(3) do
+	page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'
+        page.show 'taskdetails'
+        page.replace_html("taskdetails", :partial => "bookmark/taskdetails",
+		:locals => {:displayonly => false,					
+					:context => @context,
+                                        :related => @related})
+end

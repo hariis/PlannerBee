@@ -1,0 +1,35 @@
+
+if @entry.is_due_today	
+	page.replace_html 'task_list', ""  if @entries.size == 1	
+        priority = @entry.priority == 3 ? :top : :bottom
+        page.insert_html priority, 'task_list', :partial => "shared/entry_item", :object => @entry.entry_status, :locals => {:duetoday => true, :outline => false  }	     
+        page.sortable "task_list", :url => {:action=>:save_order}
+end
+page.replace_html 'addedtask_list', ""  if @addedtoday.size == 1
+page.replace_html("addedtask_list", :partial => "displayonlyentries", :object => @addedtoday)
+
+
+page.select(".li_#{@entry.id}").each { |b| b.visual_effect :highlight, :startcolor => "#e9ef3d",
+												:endcolor => "#ffffff", :duration => 5.0 } 
+													
+													
+page.replace_html 'flash-notice', "<div id='success'>Task added: #{@entry.formatted_title}</div>"
+page.show 'flash-notice'
+
+page.delay(5) do
+	page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'
+end
+
+page.show 'taskdetails'
+page.replace_html("taskdetails", :partial => "taskdetails",
+        :locals => {:duetoday =>@showentry.is_due_today,
+                                :overduetoday => @showentry.is_overdue_today,
+                                :displayonly => @displayonly,
+                                :children => @childentries,
+                                :parent => @parent,
+                                :context => @context,
+                                :related => @related})
+
+				
+		

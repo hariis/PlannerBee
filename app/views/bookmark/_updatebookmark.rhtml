@@ -1,0 +1,7 @@
+<%= link_to @bookmark.resource.title, :action => "show", :id => @bookmark.id %>
+	<ul><li><%= link_to "Mark Read", {:controller => 'bookmark_status', :action => "done", :id => @bookmark.id} %> |
+		<%= link_to "End", {:controller => 'bookmark_status',:action => "complete", :id => @bookmark.id} %> |
+		<%= link_to_remote 'Edit', :update => 'taskdetails', :url => {:action => 'edit', :id => @bookmark.id} %> |
+		<%= link_to "Delete", {:action => "destroy", :id => @bookmark.id} %>
+		</li>
+	</ul> 

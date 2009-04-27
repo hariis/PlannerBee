@@ -1,0 +1,11 @@
+<% if section == 2 %>
+  <li class= li_<%= subscription_item.id %> id= li_unread_<%= subscription_item.id %>   >
+<% elsif section == 3 %>
+  <li class= li_<%= subscription_item.id %>   id = li_read_<%= subscription_item.id %> >
+<% elsif section == 4 %>
+  <li class= li_<%= subscription_item.id %>  id= li_added_<%= subscription_item.id %>  >
+<% elsif section == 5 ||section == 1 %>
+    <li class= li_<%= subscription_item.id %> id= li_display_<%= subscription_item.id %>  >
+<% end %>
+<%= render(:partial => "shared/subscription_item_details", :locals => {:subscription_item => subscription_item,:unread => unread,:outline => outline,:section => section }) %>
+</li>	

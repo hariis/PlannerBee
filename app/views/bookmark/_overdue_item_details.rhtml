@@ -1,0 +1,27 @@
+<% due_now = 0 %>
+<% if !overdue_item.completed? %>             
+       <% if overdue_item.is_due_today %>
+              <% due_now = overdue_item.due_counter - 1 %>
+        <% else %>
+              <% due_now = overdue_item.due_counter %>
+        <% end %>               
+<% end %>
+<div id="contents">
+<% if due_now > 0 %>
+      <img src="/images/pending.png" alt="" height = "16"  width ="16" title="Pending"/>
+<% else %>
+      <img src="/images/checked.png" alt="" height = "16"  width ="16" title="Checked"/>
+<% end %>
+
+<% title = truncate(h(overdue_item.bookmark.resource.title), 30, "...")  + "(#{due_now})" %>  
+<img src="/images/drag_drop.gif" alt="" height = "11"  width ="11" title="Drag and Drop to prioritize"/>
+<%= link_to_remote title.capitalize, :url => { :action => "show", :id => overdue_item.bookmark.id, :incontext => "bookmark"} %>
+	
+    <% if due_now > 0 %>
+                <div id="wrapper">
+                    <ul><li><%= link_to_remote "Mark Read",:url => { :controller => 'bookmark',:action => "overdue_done", :id => overdue_item.bookmark.id, :incontext => "bookmark"} %> </li>                      
+                      </ul> 
+              </div>
+    <% end %>
+
+</div>

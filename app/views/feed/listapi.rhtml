@@ -1,0 +1,36 @@
+<%= flash[:warning] || flash[:message] || flash[:notice] %>
+<head>
+	<title>My Feeds</title>
+
+
+	<%= stylesheet_link_tag "stylesheet" %>
+
+</head>
+
+<table style="font-family: Tahoma, 'Lucida Console' ">
+ <tr>
+   <td  style="width: 414px" bgcolor="#ccffcc"><span style="font-size: 18pt">My Subscriptions </span></span></td>
+   <td></td>
+  </tr>
+</table>
+
+<% @feeds.each {|feed, items| %> 
+
+<h3 style="color:#0000ff; font-size: 14pt;bgcolor:#ccffcc"><%= feed.title%></h3>
+
+<% for item in items %>
+  <div class="section details">
+  <h4><a href="<%= item.url %>"><%= item.title %></a> <%= item.published.strftime('%a, %b %d  %I:%M %p') %></h4> |
+   <span style="font-size: 8pt; color: #cc3366;">
+                    <%= link_to "(mark as read)", {:action => "done", :id => item.id} %> 
+                    
+              </span>
+      
+  
+  
+     
+     <p style="color:#ff0000;font-size:90%;"><%= item.content %></p>
+   
+  </div>
+<% end %>
+<% } %>

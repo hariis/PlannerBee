@@ -1,0 +1,5 @@
+<% if bookmarks && bookmarks.size != 0 %>
+	 <%= render(:partial => "shared/bookmark_item", :collection => bookmarks, :locals => {:outline => outline }) %>	 
+<% else %>
+   None
+<% end %>

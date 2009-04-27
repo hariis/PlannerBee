@@ -1,0 +1,30 @@
+<%= flash[:warning] || flash[:message] || flash[:notice] %>
+<table style="font-family: Tahoma, 'Lucida Console' ">
+ <tr>
+   <td style="width: 414px;" bgcolor="#ccffcc"><span style="font-size: 18pt">My Bookmarks for Today</span></span></td>
+   <td></td>
+  </tr>
+
+ <% @bookmarks.each do |bkentry| %>
+   
+     <tr>
+      <td><%= link_to bkentry.bookmark.resource.title, :action => "show", :id => bkentry.bookmark.id %></td>
+      <td> <span style="font-size: 8pt; color: #cc3366;">
+                    <%= link_to "(Done)", {:controller => 'bookmark_status',:action => "done", :id => bkentry.bookmark.id} %> |
+                    <%= link_to "(Edit)", {:action => "edit", :id => bkentry.bookmark.id} %>  |
+                    <%= link_to "(Delete)", {:action => "destroy", :id => bkentry.bookmark.id} %>
+              </span>
+      </td>
+     </tr>
+      <tr>
+      <td><span style="font-size: 8pt; color: #990000;">Notes:<%= bkentry.bookmark.notes  %></span></td>
+     </tr>
+      <tr>
+      <td><span style="font-size: 8pt; color: #cc99ff;">Tags:<%= bkentry.bookmark.tags.collect{|t| t.name}.join("," )  %></span></td>
+     </tr>
+     
+     
+   <% end %>
+
+</table>
+

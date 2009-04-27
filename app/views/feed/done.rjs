@@ -1,0 +1,64 @@
+if @item_saved && @context == "feed"
+  page.replace_html("feeditem_save_#{ @feeditem.id}", "Saved and Marked Read")
+  page.replace_html("feeditem_mark_read_#{ @feeditem.id}", "")  
+elsif @item_saved && @context == "task"
+  page.replace_html("feeditem_save_#{ @feeditem.id}", "Saved")  
+end
+if @item_saved
+  dom_id = "li#feeditem_save_#{ @feeditem.id}"
+  page.select(dom_id).each { |b| b.visual_effect :highlight, :startcolor => "#88ff88", :endcolor => "#FDE905", :duration => 5.0 } 
+  page.replace_html("share-form_#{@feeditem.id}", :partial => 'feed_item/update_share_comments', :locals => {:feed_item => @feeditem, :comments => @comments})
+end
+
+if @context == "feed"
+#When an item is marked read
+#It has a subscription in the Due today section or Display only section(Added Today/Query) or BOTH
+#But we are not sure if the subscription is listed under the Recently read section - Check if the subscription.viewstatus == 1
+
+#Due today section
+if @subscription.due_today	
+    page.replace_html("li_unread_#{@subscription.id}", :partial => "shared/subscription_item_details", :locals => {:subscription_item => @subscription,:unread => true,:outline => false,:section => 2 })
+end
+
+#Recently Read section
+#If this subscription already exists, update it.
+#If not, add this subscription to the bottom of the read list on the nav pane
+if @subscription.recently_read_count > 1
+    page.replace_html("li_read_#{@subscription.id}", :partial => "shared/subscription_item_details", :locals => {:subscription_item => @subscription,:unread => false,:outline => false,:section => 3 })
+else   
+    first_read_of_the_day = false
+    page << "if ($('completedtask_list').innerHTML == 'None') {"
+            first_read_of_the_day = true    
+    page << "}" 
+    page.replace_html 'completedtask_list', ""  if first_read_of_the_day  #@read_subscriptions.size == 1
+    page.insert_html :bottom, 'completedtask_list', :partial => "shared/subscription_item", :object => @subscription, :locals => {:unread => false,:outline => false,:section => 3 } 
+end
+
+
+#Added today only section 
+page << "if ($('li_added_#{@subscription.id}')) {"
+page.replace_html( "li_added_#{@subscription.id}",:partial => "shared/subscription_item_details", :locals => {:subscription_item => @subscription,:unread => true,:outline => false,:section => 4 })
+page << "}" 
+
+#display Query section - No need to update the contents for this section on the nav pane 
+page << "if ($('li_display_#{@subscription.id}')) {"
+page.replace_html( "li_display_#{@subscription.id}",:partial => "shared/subscription_item_details", :locals => {:subscription_item => @subscription,:unread => true,:outline => false,:section => 5 })
+page << "}" 
+
+#HIGHLIGHT the subscriptions on the navigation pane
+page.select(".li_#{@subscription.id}").each { |b| b.visual_effect :highlight, :startcolor => "#88ff88",  :endcolor => "#ffffff", :duration => 7.0 } 
+
+if !@item_saved
+      #We are displaying unread items
+      #page.replace_html("feeddetails",:partial => 'shared/feeddetails',:locals => {:unread => true, :subscription =>  @subscription})      
+      dom_id = "feeditem_#{@feeditem.id}" 
+      page.visual_effect :blind_up, dom_id, :duration => 3.0
+end
+end
+#if @subscription.are_all_recent_items_read
+#    page.select(".feeditem").each { |b| b.remove } 
+#    page.replace_html("feeddetails",:partial => 'feeddetails',
+#                    :locals => {:unread => true, :subscription =>  @subscription})
+#else
+#    page.remove '"feeditem_#{@feeditem_id}"'
+#end

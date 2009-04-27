@@ -1,0 +1,36 @@
+<div style="font-weight: bold;color:#107CE0;text-align:center;font-size:18px;">
+<span>Find Tasks similar to yours</span>
+</div>
+
+<% form_remote_tag :url => { :action => :advanced_search },:update => 'taskdetails',  :method => 'post', :before => "Element.show('spinner');$('taskdetails').innerHTML='';$('flash-notice').innerHTML=''",
+                                                                                                                                        :complete => "Element.hide('spinner')" do -%>
+
+<div id="content">
+
+	<div class="row">
+		  <span class="label">Describe:</span>
+		  <span	class="formw"><%= text_field_tag('keywords','', {:size => 30, :maxlength => 20}) %><br/>
+                 <span class ="info">Example keywords: hiking, mt.hood, hawaii, vacation. Max. 20 characters </span>  </span>               
+	</div>
+	<div class="row">
+		  <span class="label">Scheduled for:</span>
+		   <span class="formw"><%= calendar_date_select_tag "scheduled_date", TzTime.now.to_date , :time => false  %></span>
+	</div>
+        <div class="row">
+			<span class="label">By Who: </span>
+			<span	class="formw"><%= text_area_tag :usernames %><br/>
+                         <span class ="info">Separate multiple usernames by comma OR<br/> Leave blank for everyone in the community </span></span>
+	</div>
+
+  </div>
+<div class="spacer"> &nbsp;   </div> 
+		<div class="spacer"> &nbsp;   </div>
+
+<div class="submit">
+<%= submit_tag "Find" %> or <%= link_to "Cancel", :controller => :entry , :action => :index %>
+</div>
+
+
+<% end %>
+ 
+

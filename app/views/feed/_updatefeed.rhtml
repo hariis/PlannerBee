@@ -1,0 +1,8 @@
+<%= link_to_remote @feed.title, :url => {:action => "show", :id => @feed.id},
+																											:update => 'feeddetails' %>
+	<ul><li>
+		<%= link_to "(Edit)", {:action => "edit", :id => @feed.id} %>  |
+		<%= link_to "(Unsubscribe)", {:action => "destroy", :id => @feed.id} %> 
+		</li>
+	</ul> 
+	

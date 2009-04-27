@@ -1,0 +1,20 @@
+ <span style="color: #ff0000;font-size:12px;">
+<% if @showall %>        
+                <% if @filtered_tasks && @filtered_tasks.size > 0 %>                          
+                            Filter by <em><%= link_to_remote @displaytags, :url => { :action => :filter_tasks,  :taglist => @displaytags} %></em> |               
+                <% end %>                   
+                      Showing All  <br/>                          
+                             <%= select_tag 'parent_tasks[]',    options_for_select(@entries.collect{|e| [ e.title,e.id ]} ),  { :multiple => true, :size =>2,:include_blank => true } %>        
+          
+ <% else %>        
+                   <% if @filtered_tasks && @filtered_tasks.size > 0 %>           
+                             Filtered by <span style="color: #0077BB;"><em><%= @displaytags %></em></span> |                           
+                             Show <%= link_to_remote "All", :url => { :action => :show_all_tasks,  :taglist => @displaytags, :type => 'all'} %>                                        
+                                          <%= select_tag 'parent_tasks[]',    options_for_select(@filtered_tasks.collect{|e| [ e.title,e.id ]} ),  { :multiple => true, :size =>2,:include_blank => true } %>                                           
+                    <% else %>                 
+                        Showing All <br/>
+                              <%= select_tag 'parent_tasks[]',    options_for_select(@entries.collect{|e| [ e.title,e.id ]} ),  { :multiple => true, :size =>2,:include_blank => true } %>
+                                                   
+                  <% end %>          
+<% end %>
+</span>

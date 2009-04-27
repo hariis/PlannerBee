@@ -1,0 +1,25 @@
+<div style="background-color: #CBF1B3;
+border: 0px solid #333; padding: 0px;
+margin: 0px auto";>
+ 
+<div>
+<p>Share this Bookmark</p>
+</div>
+
+<% remote_form_for :bookmark, :url => {:action => 'send_email', :id => id}, :before => "Element.show('spinner');Element.hide('taskdetails')",
+																			:complete => "Element.hide('spinner');Element.show('taskdetails')" do |form| -%>
+<fieldset id = "options">
+<LEGEND ACCESSKEY=P>Share</LEGEND>
+	<div class="row">
+			<span class="label">Share with others:</span>
+			<span	class="formw"><%= text_area_tag :emails, contents,	:size => '50' %><br/>(Enter email addresses separated by comma) </span>
+	</div>
+	
+</fieldset>
+
+<div class="submit">
+<%= submit_tag "Add" %> or <%= link_to "Cancel", :controller => :bookmark , :action => :index %>
+</div>
+
+</div>
+<% end %>

@@ -1,0 +1,10 @@
+<div id='failure'>
+	<%= @errormessage.errors.count %> error(s) found.
+	
+	<ul>				
+	<% @errormessage.errors.each do |attr,e| %>
+		<li>e </li>	
+	<% end %>
+	</ul>
+	Please try again.
+</div>

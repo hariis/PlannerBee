@@ -1,0 +1,14 @@
+page.hide 'results'
+page.hide 'all_feed_items'
+page.show 'feeddetails'
+page.show 'taskdetails'
+page.show 'hide-details'
+page.replace_html("taskdetails", :partial => "taskdetails",
+		:locals => {:duetoday => @showentry.is_due_today,
+					:overduetoday => @showentry.is_overdue_today,
+					:displayonly => @displayonly,
+					:children => @childentries,
+					:parent => @parent,
+                                        :goal => @goal,
+					:context => @incontext,
+                                        :related => @related})

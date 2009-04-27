@@ -1,0 +1,21 @@
+<% if display_results %>
+    <p><%= results_heading %></p>
+    <% if results.size == 0 %>
+                    <ul><li>None</li></ul>
+    <% else %>
+    <ul>
+    <% results.each {|bk| %>			
+
+        <li><%= link_to_remote bk.resource.title, :url => { :controller => 'bookmark', :action => "show", :id => bk.id, :incontext => "bookmark", :displayonly => true} %></li>
+
+    <% } %>
+    </ul>
+    <% end %>
+<% elsif display_cloud %>
+    <% if current_user %>
+      <p>Tag cloud for all my bookmarks</p>
+	<%= tag_cloud_for_user(current_user,Bookmark) %>
+    <% else %>
+
+    <% end %>
+<% end %>

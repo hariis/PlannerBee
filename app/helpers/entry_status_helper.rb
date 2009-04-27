@@ -1,0 +1,2 @@
+module EntryStatusHelper
+end

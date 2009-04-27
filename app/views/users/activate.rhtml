@@ -1,0 +1,10 @@
+
+<div id="headband">
+Activate your account
+</div>
+<% hidden_div_if( flash[:error] == nil , :id => "flash-notice") do %>
+	<%= flash[:error] %>
+<% end %>
+<% hidden_div_if( flash[:notice] == nil , :id => "status-notice") do %>
+	<%= flash[:notice] %>	
+<% end %>

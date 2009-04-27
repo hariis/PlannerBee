@@ -1,0 +1,15 @@
+
+xml.response(:code => @code) do 
+ xml.timestamp(TzTime.now)
+  xml.bookmarks do
+    @bookmarks.each do |bookmark| 
+      xml.bookmark do
+        xml.title(bookmark.title)
+        xml.notes(bookmark.notes)
+        xml.url(bookmark.url)
+        xml.read(bookmark.done)
+      end
+    end
+  end 
+end
+

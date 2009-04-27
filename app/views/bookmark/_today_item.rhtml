@@ -1,0 +1,6 @@
+ <li class= li_<%= today_item.id %> id= li_<%= today_item.id %> >
+<div id="contents">
+<%= link_to_remote  truncate(h(today_item.resource.title.capitalize), 30, "..."),:url => { :action => "show", :id => today_item.id, :incontext => "bookmark", :displayonly => true} %>
+	
+</div>
+</li> 

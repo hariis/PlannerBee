@@ -1,0 +1,5 @@
+<% if subscriptions && subscriptions.size != 0 %>
+	 <%= render(:partial => "shared/subscription_item", :collection => subscriptions, :locals => {:unread => unread,:outline => outline,:section => section }) %>	 
+<% else %>
+   None
+<% end %>

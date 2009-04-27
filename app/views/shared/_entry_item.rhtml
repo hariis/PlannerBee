@@ -1,0 +1,12 @@
+
+<% if duetoday %>
+  <li class= li_<%= entry_item.entry.id %> id= li_today_<%= entry_item.entry.id %>  >
+<% else %>
+  <li  class= li_<%= entry_item.entry.id %> id= li_overdue_<%= entry_item.entry.id %> >
+<% end %>
+
+<%= render(:partial => "shared/entry_item_details", :locals => {:entry_item => entry_item, :duetoday => duetoday, :outline => outline }) %>	 
+
+
+
+</li>	

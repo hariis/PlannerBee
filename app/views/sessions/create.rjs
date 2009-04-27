@@ -1,0 +1,2 @@
+errormessage = "<div id='failure'>	#{@message} </div>"
+page.replace_html 'flash-notice',"Invalid login"

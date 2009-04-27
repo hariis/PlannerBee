@@ -1,0 +1,30 @@
+if @context == "bookmark"
+	if @action_performed == "done" 
+              dom_id = "li_today_#{@bookmark.id}"
+              page.replace_html 'bk_list', ""  if @bookmarks.size == 1 #Removing the "No bookmarks due" text 
+              page.replace_html(dom_id, :partial => "shared/bookmark_item_details", :object => @bookmark_status, :locals => {:outline => false })
+        end
+	if @action_performed == "overdue_done" 
+              dom_id = "li_overdue_#{@bookmark.id}"
+              page.replace_html 'overduebk_list', ""  if @overdues.size == 1 #Removing the "No bookmarks due" text 
+              page.replace_html("overduebk_list", :partial => "overdues", :object => @overdues, :locals => {:outline => false })
+        end
+        if @action_performed == "ended"
+	page.select(".li_#{@bookmark.id}").each { |b| b.visual_effect :highlight, :startcolor => "#88ff88",
+													:endcolor => "#ffffff", :duration => 7.0 } 
+        end
+end
+
+
+page.replace_html 'flash-notice', "<div id='success'> #{@bookmark.title} marked read</div>"
+page.show 'flash-notice'
+
+page.delay(3) do
+	page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'
+        page.show 'taskdetails'
+        page.replace_html("taskdetails", :partial => "bookmark/taskdetails",
+		:locals => {:displayonly => false,					
+					:context => @context,
+                                        :related => @related})
+end

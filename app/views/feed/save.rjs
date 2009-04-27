@@ -1,0 +1,29 @@
+if @context == 'feed'
+    if @feedsubscription.due_today?	
+            page.replace_html 'task_list', ""  if @subscriptions.size == 1		
+            page.insert_html :bottom, 'task_list', :partial => "shared/subscription_item", :object => @feedsubscription, :locals => {:unread => true, :outline => false, :section => 2 } 
+    end
+    #Irrespective of due today or not, it should in the Added today section
+    page.replace_html 'addedtask_list', ""  if @addedtoday.size == 1
+    page.insert_html :bottom, 'addedtask_list', :partial => "shared/subscription_item", :object => @feedsubscription, :locals => {:unread => true, :outline => false, :section => 4 } 	
+    #Highlighting
+    page.select(".li_#{@feedsubscription.id}").each { |b| b.visual_effect :highlight, :startcolor => "#88ff88",  :endcolor => "#ffffff", :duration => 7.0 } 
+end
+page.replace_html 'flash-notice', "<div id='success'> #{@status_message} </div>"
+page.show 'flash-notice'
+
+page.delay(5) do
+	page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'
+end
+
+if @context == 'feed'
+    #page.replace_html 'feeddetails', ""					
+    page.show 'feeddetails'
+    page.replace_html("feeddetails",:partial => 'shared/feeddetails',
+          :object => @currentDisplayfeeditems,
+          :locals => {:unread => true, :subscription =>  @feedsubscription})
+elsif @context == 'task'
+   page.show 'taskdetails'
+   page.hide 'feeddetails'
+end

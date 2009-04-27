@@ -1,0 +1,12 @@
+			
+page.replace_html 'feedtitle', "#{@subscription.feed.title}"
+page.replace_html 'flash-notice', ""
+if params[:unread] != nil 
+	render :partial => 'shared/feeddetails', :locals => {:unread => params[:unread]}
+	#page.replace_html("feeddetails", :partial => "feeddetails", :locals => {:unread => params[:unread]})
+	#page.replace_html("task_list", :partial => "entries", :object => @entries)
+else
+	render :partial => 'shared/feeddetails'
+	#page.replace_html("feeddetails", :partial => "feeddetails")
+end	
+	

@@ -1,0 +1,76 @@
+<div id="feedcontainer"> 
+            
+            <div id="feedheader">
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+                <div id="context-title">
+                <%= TzTime.now.to_date.to_s(:long) %>
+                </div>
+				<div id="addnewfeed">
+                                <%= link_to_remote image_tag('addnewfeed.png',  :title => "Subscribe to a feed"), :url => {:action => :subscribe, :type=>'feed'},:update => 'feeddetails', :before => "Element.show('spinner');$('feeddetails').innerHTML='';$('flash-notice').innerHTML='';",
+                                                                                                                                        :complete => "Element.hide('spinner')"   %>
+					
+                </div>
+                <div class="spacer">
+                  &nbsp;
+                </div> 
+				<div class="spacer">
+                  &nbsp;
+                </div>
+            </div>
+			
+			
+
+		<div id="feedbody">
+	        
+	        <div id="feednav">
+	                <div id="feeds-today">Feeds for Today</div>
+                        <ul id="task_list">
+                        <!-- List feeds -->
+                                <%= render :partial => 'shared/subscriptions', :locals => {:unread => true, :outline => false, :section => 2} %>
+                        </ul>
+
+                        <div id="overduetasksheading">Recently read </div>
+                        <ul  id="completedtask_list">
+                                <%= render :partial => 'shared/subscriptions', :object => @read_subscriptions, :locals => {:unread => false, :outline => false, :section => 3}  %>					
+                        </ul>
+
+                        <div id="addedheading">Added today </div>
+                        <ul  id="addedtask_list">
+                                <%= render :partial => 'shared/subscriptions', :object => @addedtoday, :locals => {:unread => true, :outline => false, :section => 4}  %>					
+                        </ul>
+                        
+                        <div id="queryheading"> <%=  select_tag 'query_type', options_for_select(@query_types.sort { |v1,v2| v1[1].to_i <=> v2[1].to_i}.collect{|k| [ k[0],k[1] ]}, 1) %></div>
+                        <%= observe_field "query_type",:frequency => 0.25,
+                         :url => { :action => "show_query_results"},
+                        :with => "'query_type=' + escape(value)" %>
+                      
+                        
+	                <div id="pick_a_date"  style ="display:none;">View feeds for <%= calendar_date_select_tag "future_date", TzTime.now.to_date , :time => false  %></div>
+                        <%= image_tag 'loading.gif', :id=>'nav_spinner', :style=>"display:none;" %>
+                       <%= observe_field 'future_date', :update => 'query_results',:frequency => 0.25,
+                                                                                             :url => { :action => :view_future},
+                                                                                            :with => "'future_date=' + escape(value)", 
+                                                                                          :before => "Element.show('nav_spinner');$('query_results').innerHTML='';" ,
+                                                                                           :complete => "Element.hide('nav_spinner')" %>
+
+                        <ul id="query_results"></ul>
+	        </div>
+            <div id = "flash-notice">
+			</div>
+			<div id="feeddetails">
+				<% if @subscriptions.size != 0 %>
+					<%= render :partial => 'shared/feeddetails', :object => @currentDisplayfeeditems, :locals => {:unread => true, :subscription => @subscription} %>
+                                        
+                               <% else %>
+                                        No feeds due today
+				<% end %>				
+			</div>  
+                        <div id="taskdetails"  style="display: none">
+                        </div>
+                        <div id="results"   style="display: none">
+                        </div>
+    </div>    
+      
+

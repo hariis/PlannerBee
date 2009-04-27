@@ -1,0 +1,60 @@
+if @context == "task"
+	#Update the Due today section
+	if @entry.is_due_today	&& @was_due_today            
+            dom_id = "li_today_#{@entry.id}"
+            page.replace_html(dom_id, :partial => "shared/entry_item_details", :locals => {:entry_item => @entry.entry_status, :duetoday => true, :outline => false  })	                
+	end
+        if @entry.is_due_today && !@was_due_today
+            page.replace_html 'task_list', ""  if @entries.size == 1
+            page.insert_html :bottom, 'task_list', :partial => "shared/entry_item", :object => @entry.entry_status, :locals => {:duetoday => true, :outline => false  }	     
+            page.sortable "task_list", :url => {:action=>:save_order}
+        end
+        if @was_due_today && !@entry.is_due_today
+           dom_id = "li_today_#{@entry.id}" 
+           page.visual_effect :blind_up, dom_id, :duration => 3.0
+           page.delay(5) do
+                page.remove  dom_id
+           end
+        end
+        #Update the overdues section
+	if @entry.is_overdue_today		
+		#page.replace_html 'overduetask_list', ""  if @overdues.size == 1 #Removing the "No tasks due" text 			
+		#page.replace_html("overduetask_list", :partial => "shared/entries", :object => @overdues, :locals => {:marked_overdue => '1'})		
+                dom_id = "li_overdue_#{@entry.id}"
+		page.replace_html(dom_id, :partial => "shared/entry_item_details", :locals => {:entry_item => @entry.entry_status, :duetoday => false, :outline => false })	
+                
+                #page.sortable "overduetask_list", :url => {:action => :save_overdue_order}
+	end
+	
+        #Update the Added today section	
+        #page.replace_html("addedtask_list", :partial => "displayonlyentries", :object => @addedtoday)
+	page << "if ($('li_#{@entry.id}')) {"        
+        page.replace_html("li_#{@entry.id}", :partial => "displayonly_entry_item", :locals => {:displayonly_entry_item => @entry, :outline => false  })	
+        page << "}"       
+        #Highlight appropriate entries
+	page.select(".li_#{@entry.id}").each { |b| b.visual_effect :highlight, :startcolor => "#e9ef3d",
+														:endcolor => "#ffffff", :duration => 5.0 } 
+	page.replace_html 'addedtask_list', ""  if @addedtoday.size == 1
+	page.replace_html("addedtask_list", :partial => "displayonlyentries", :object => @addedtoday)
+end
+
+page.replace_html 'flash-notice', "<div id='success'>Task updated: #{@entry.formatted_title}</div>"
+page.show 'flash-notice'
+
+page.delay(3) do
+	#page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'        
+end
+page.show 'taskdetails'
+page.replace_html("taskdetails", :partial => "taskdetails",
+        :locals => {:duetoday => @showentry.is_due_today,
+                                :overduetoday =>@showentry.is_overdue_today,
+                                :displayonly => @displayonly,
+                                :children => @childentries,
+                                :parent => @parent,
+                                :context => @context,
+                                :related => @related})
+		
+
+
+

@@ -1,0 +1,5 @@
+<% if entries && entries.size != 0 %>
+	 <%= render(:partial => "shared/entry_item", :collection => entries, :locals => {:duetoday => duetoday, :outline => outline }) %>	 
+<% else %>
+   None
+<% end %>

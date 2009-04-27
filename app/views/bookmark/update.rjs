@@ -1,0 +1,49 @@
+if @context == "bookmark"
+	if @bookmark.is_due_today && @was_due_today           
+              dom_id = "li_today_#{@bookmark.id}"             
+              page.replace_html(dom_id, :partial => "shared/bookmark_item_details", :locals => {:bookmark_item => @bookmark.bookmark_status,  :outline => false  })              
+        end
+        if @bookmark.is_due_today && !@was_due_today
+            page.replace_html 'bk_list', ""  if @bookmarks.size == 1	
+            page.insert_html :bottom, 'bk_list', :partial => "shared/bookmark_item", :object => @bookmark.bookmark_status, :locals => { :outline => false  }	     
+            page.sortable "bk_list", :url => {:action => :save_order}
+        end
+        if @was_due_today && !@bookmark.is_due_today
+           dom_id = "li_today_#{@bookmark.id}"
+           page.visual_effect :blind_up, dom_id, :duration => 3.0
+           page.delay(5) do
+                page.remove  dom_id
+           end
+        end
+        
+        if @bookmark.is_overdue_today
+              #page.replace_html 'overduebk_list', ""  if @overdues.size == 1 #Removing the "No bookmarks due" text 
+              #page.replace_html("overduebk_list", :partial => "overdues", :object => @overdues, :locals => {:outline => false })
+              dom_id = "li_overdue_#{@bookmark.id}"
+              page.replace_html(dom_id, :partial => "overdue_item_details", :locals => {:overdue_item => @bookmark.bookmark_status,  :outline => false })
+        end   
+        
+        #The title may have changed, hence we need to update this section
+	page.replace_html("addedbk_list", :partial => "todays", :object => @addedtoday)        
+        page << "if ($('li_#{@bookmark.id}')) {"
+        page.replace_html("li_#{@bookmark.id}", :partial => "today_item", :locals => {:today_item => @bookmark, :outline => false  })	
+        page << "}"       
+  
+	page.select(".li_#{@bookmark.id}").each { |b| b.visual_effect :highlight, :startcolor => "#e9ef3d",
+													:endcolor => "#ffffff", :duration => 5.0 } 	
+end
+
+
+page.replace_html 'flash-notice', "<div id='success'>Bookmark updated: #{@bookmark.resource.title}</div>"
+page.show 'flash-notice'
+#page.visual_effect :pulsate, 'flash-notice' #highlight
+page.delay(5) do
+              page.replace_html 'success', ""
+              page.visual_effect :fade, 'flash-notice'
+             
+end			
+page.show 'taskdetails'
+page.replace_html("taskdetails", :partial => "taskdetails",
+        :locals => {:displayonly => false,					
+                                :context => @context,
+                                :related => @related})		

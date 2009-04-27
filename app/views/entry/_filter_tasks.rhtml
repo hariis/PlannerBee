@@ -1,0 +1,28 @@
+ <span style="color: #ff0000;font-size:12px;">
+<% if @showall %>        
+                <% if @filtered_childtasks && @filtered_childtasks.size > 0 %>                          
+                            Filter by <em><%= link_to_remote @displaytags, :url => { :action => :filter_tasks,  :taglist => @displaytags} %></em> |               
+                <% end %>                   
+                      Showing All  <br/>                               
+                           <%= select 'entry', 'parent_id', @childtasks.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>
+                           <%= observe_field "entry_parent_id",:frequency => 0.25,
+                               :url => { :action => "displaychildtasks", :type => 'all',  :taglist => @displaytags},         #if type is 'show all' then there is no need for tag list
+                              :with => "'taskid=' + escape(value)" %>                   
+          
+ <% else %>        
+                   <% if @filtered_childtasks && @filtered_childtasks.size > 0 %>           
+                             Filtered by <span style="color: #0077BB;"><em><%= @displaytags %></em></span> |                           
+                             Show <%= link_to_remote "All", :url => { :action => :show_all_tasks,  :taglist => @displaytags, :type => 'all'} %> 
+                                        <%= select 'entry', 'parent_id', @filtered_childtasks.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>
+                                        <%= observe_field "entry_parent_id",:frequency => 0.25,
+                                         :url => { :action => "displaychildtasks",  :taglist => @displaytags},    #if type is 'filtered by' then you need to send the tag list
+                                        :with => "'taskid=' + escape(value)" %>                                               
+                    <% else %>                 
+                        Showing All <br/>                                   
+                             <%= select 'entry', 'parent_id', @childtasks.collect{|e| [ h(e.title),e.id ]} ,:include_blank => true -%>
+                             <%= observe_field "entry_parent_id",:frequency => 0.25,
+				 :url => { :action => "displaychildtasks", :type => 'all',  :taglist => @displaytags},    #if type is 'show all' then there is no need for tag list
+				:with => "'taskid=' + escape(value)" %>                       
+                  <% end %>          
+<% end %>
+</span>

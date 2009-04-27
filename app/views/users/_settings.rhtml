@@ -1,0 +1,25 @@
+        <div class="row wide-row">
+                  <span class="label">Old Password:</span>
+                  <span	class="formw"><%= password_field_tag 'old_password', nil , :size => 30, :maxlength => 20 %><br/></span>
+        </div>
+        <div class="row wide-row">
+                  <span class="label">New Password:</span>
+                  <span	class="formw"><%= settings.password_field :password , :size => 30,:maxlength => 20 %><br/>(between 5 and 20 characters)</span>
+        </div>		  
+	
+	  <div class="row wide-row">
+	  <span class="label">Confirm Password:</span>
+	  <span	class="formw"> <%= settings.password_field :password_confirmation , :size => 30,:maxlength => 20 %>
+				</span>
+	</div>	
+	 
+	
+	<div class="spacer">
+	  &nbsp;
+	</div>
+	<div id="submit">
+		<%= submit_tag 'Update', :disable_with => "Signing up&hellip;" %> 
+	</div>
+	<div class="spacer">
+	  &nbsp;
+	</div>

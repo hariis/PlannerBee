@@ -1,0 +1,57 @@
+if @context == "task"
+        dom_id = "li_#{@entry.id}"
+	if @done || (@completed  &&@entry.is_due_today )
+#                dom_id = "li_today_#{@entry.id}"
+#		page.replace_html(dom_id, :partial => "shared/entry_item_details", :locals => {:entry_item => @entry_status,:duetoday => true, :outline => false  })	
+
+		dom_id = "li_today_#{@entry.id}"
+		page.remove  dom_id
+		page.insert_html :bottom, 'task_list', :partial => "shared/entry_item", :object => @entry.entry_status, :locals => {:duetoday => true, :outline => false  }	
+		page.sortable "task_list", :url => {:controller => 'entry' , :action=>:save_order}
+	end
+	if @overduedone	|| (@completed  &&@entry.is_overdue_today )
+		 #One way - Does not move the completed entry to the bottom
+#               dom_id = "li_overdue_#{@entry.id}"
+#		page.replace_html(dom_id, :partial => "shared/entry_item_details", :locals => {:entry_item => @entry_status, :duetoday => false, :outline => false })	
+#		# Another way  - Move the entry to the bottom but does not highlight
+#		page.replace_html("overduetask_list", :partial => "shared/entries", :object => @overdues, :locals => {:duetoday => false, :outline => false  })	
+#		page.sortable "overduetask_list", :url => {:action=>:save_overdue_order}
+                
+		#The way - Does it all
+		dom_id = "li_overdue_#{@entry.id}"
+		page.remove  dom_id
+		page.insert_html :bottom, 'overduetask_list', :partial => "shared/entry_item", :object => @entry.entry_status, :locals => {:duetoday => false, :outline => false  }
+		page.sortable "overduetask_list", :url => {:controller => 'entry' , :action=>:save_overdue_order}
+	end
+         if @done || @overduedone
+              select_dom_id = "li#" + dom_id
+              page.select(select_dom_id).each { |b|
+                b.visual_effect :highlight, :startcolor => "#eef106", :endcolor => "#ffffff", :duration => 5.0
+              } 
+         end
+          if @completed
+            page.select(".li_#{@entry.id}").each { |b| b.visual_effect :highlight, :startcolor => "#88ff88",  :endcolor => "#ffffff", :duration => 7.0 } 
+        end
+end
+
+if @action_perfomed == "undone" 
+  page.replace_html 'flash-notice', "<div id='success'>Reverted Status on <em>#{@entry.formatted_title} </em></div>"
+else
+  page.replace_html 'flash-notice', "<div id='success'><em>#{@entry.formatted_title} </em>marked as #{@action_perfomed.capitalize}</div>"
+end
+
+page.show 'flash-notice'
+
+page.delay(3) do
+	page.replace_html 'success', ""
+	page.visual_effect :fade, 'flash-notice'
+        page.show 'taskdetails'
+        page.replace_html("taskdetails", :partial => "entry/taskdetails",
+		:locals => {:duetoday => @showentry.is_due_today,
+					:overduetoday => @showentry.is_overdue_today,
+					:displayonly => @displayonly,
+					:children => @childentries,
+					:parent => @parent,
+					:context => @incontext,
+                                        :related => @related})
+end

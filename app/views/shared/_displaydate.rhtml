@@ -1,0 +1,35 @@
+
+<% if @freqintervals %>
+	<div class="row">
+		<span class="label">Starting:</span>
+		<div id="cal">
+		<span	class="formw">	<%= calendar_date_select_tag "start", TzTime.now, :time => false  %></span>
+		</div>
+	</div>
+	<div class="row">
+		<span class="label">Ending:</span>
+		<div id="cal">
+		<span	class="formw">	<%= calendar_date_select_tag "end", TzTime.now.tomorrow, :time => false %></span>
+		</div>
+	</div>
+	<div class="row">
+		<span class="label"></span>
+		<span	class="formw"><%= select_tag 'freq_interval',    options_for_select(  @freqintervals.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]} ),:selected => '1'%></span>
+	</div>
+
+<% else %>
+	<div class="row">
+		<span class="label"></span>
+		<div id="cal">
+		<span	class="formw">	<%= calendar_date_select_tag "start", TzTime.now, :time => false  %></span>
+		</div>
+	</div>
+<% end %>
+
+<% if @freqintervalsqual %>
+	<div class="row">
+		<span class="label"></span>
+		<span	class="formw"><%= select_tag 'freq_interval_details[]',    options_for_select(@freqintervalsqual.sort{|v1,v2| v1[0].to_i<=>v2[0].to_i}.collect{|k| [ k[1],k[0] ]} , '1' ),  { :multiple => true, :size =>7 } %> </span>
+	</div>
+<% end %>
+
